@@ -4,22 +4,43 @@ This directory contains comprehensive schema specifications and documentation fo
 
 ## Contents
 
-### Documentation
+### 📚 Core Documentation
+
+This directory serves as the central hub for all DBN specification documentation:
+
+#### Base DBN Specification
 
 - **[DBN_SCHEMA_SPECIFICATION.md](DBN_SCHEMA_SPECIFICATION.md)** - Complete binary format specification
   - Record structure and sizes
   - Field definitions and data types
   - Enumerations and constants
   - Version history and compatibility
+  - **Start here:** Foundation for understanding the DBN format
 
-- **[SCHEMA_MANAGEMENT.md](SCHEMA_MANAGEMENT.md)** - Schema management guide
+#### Cryptocurrency Extensions
+
+- **[CRYPTO_DBN_QUICK_REFERENCE.md](CRYPTO_DBN_QUICK_REFERENCE.md)** - Quick reference guide for crypto-specific adaptations
+  - Executive summary of new crypto record types
+  - Schema design principles and symbology standards
+  - Lakehouse architecture and storage strategy
+  - Performance targets and cost estimation
+  - **Start here:** For a high-level overview of crypto extensions
+
+- **[CRYPTO_DBN_REQUIREMENTS_AND_SPECS.md](CRYPTO_DBN_REQUIREMENTS_AND_SPECS.md)** - Comprehensive crypto market requirements and specifications
+  - Detailed gap analysis (crypto vs traditional markets)
+  - New record type definitions (18 total)
+  - Enhanced metadata for cryptocurrencies
+  - Architecture recommendations
+  - Implementation roadmap
+  - **Recommended read:** After the quick reference, for detailed specifications
+
+#### Implementation Guides
+
+- **[SCHEMA_MANAGEMENT.md](SCHEMA_MANAGEMENT.md)** - Schema management and development guide
   - Working with protobuf and buf CLI
   - Schema versioning strategy
   - Code generation workflow
-  - Best practices
-
-- **[CRYPTO_DBN_REQUIREMENTS_AND_SPECS.md](CRYPTO_DBN_REQUIREMENTS_AND_SPECS.md)** - Crypto market data requirements
-- **[CRYPTO_DBN_QUICK_REFERENCE.md](CRYPTO_DBN_QUICK_REFERENCE.md)** - Quick reference guide
+  - Best practices and contribution guidelines
 
 ### Schema Definitions
 
