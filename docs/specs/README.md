@@ -88,15 +88,15 @@ buf generate
 buf breaking --against '.git#branch=main'
 ```
 
-#### JSON Schemas (`jsonschema/`)
+#### JSON Schemas (`gen/jsonschema/`)
 
 JSON Schema definitions for runtime validation and documentation.
 
 ```
-jsonschema/
-├── *.schema.json         # Individual message schemas
-├── MboMsg.schema.json   # Example: MBO message schema
-└── README.md            # JSON Schema documentation
+gen/
+└── jsonschema/
+    ├── *.schema.json         # Individual message schemas
+    └── MboMsg.schema.json   # Example: MBO message schema
 ```
 
 **Features:**

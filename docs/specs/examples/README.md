@@ -68,7 +68,7 @@ These examples are placeholder stubs and will be populated with actual sample da
 ## Notes
 
 - All .dbn files are gzip-compressed and can be read with standard DBN libraries
-- JSON files conform to JSON Schema definitions in `../jsonschema/`
+- JSON files conform to JSON Schema definitions in `gen/jsonschema/`
 - Code examples assume dbn library is available in your language of choice
 - See respective language documentation for compilation/execution
 
