@@ -1,12 +1,13 @@
 # Crypto-DBN Quick Reference Guide
 
-**Version**: 1.0 | **Date**: 2025-10-15 | **Base**: DBN v3 → Crypto-DBN v4
+**Version**: 1.0 | **Date**: 2025-11-13 | **Status**: 🔵 Proposal
+**Base**: DBN v3 → Crypto-DBN v4
 
 ---
 
 ## 📊 Executive Summary
 
-This quick reference provides a condensed overview of the proposed Crypto-DBN extensions for adapting Databento's binary format to cryptocurrency markets.
+This quick reference provides a condensed overview of **proposed** Crypto-DBN extensions for adapting Databento's binary format to cryptocurrency markets. See [Status & Implementation](#status--implementation) section for details on implementation status of each feature.
 
 ### Key Metrics
 
@@ -352,6 +353,30 @@ struct DexSwapMsg {
 | Uptime | 99.99% | ✅ |
 | Compression ratio | >4:1 | ⚠️ |
 | False positive rate | <0.01% | ⚠️ |
+
+---
+
+## 📋 Status & Implementation
+
+**Current Status:** 🔵 **Proposal / Design Phase**
+
+This document presents a comprehensive proposal for adapting DBN to cryptocurrency markets. Implementation is currently in the **planning and design phase**.
+
+**By Component:**
+- **Core Infrastructure** (buf tooling, hierarchical schemas): ✅ Implemented
+- **Crypto-specific Schemas** (FundingRateMsg, LiquidationMsg, etc.): 🔵 Proposed
+- **Migration Guides**: ✅ Complete
+- **Reference Implementation**: ⏳ In Progress
+- **Production Deployment**: 📅 Planned
+
+**Next Steps:**
+1. Design review and stakeholder feedback
+2. Create reference implementation with selected schemas
+3. Validate against real cryptocurrency market data
+4. Iterate on schema design based on testing
+5. Production rollout (phased approach)
+
+For implementation tracking and detailed timeline, see [IMPLEMENTATION_SUMMARY.md](IMPLEMENTATION_SUMMARY.md).
 
 ---
 

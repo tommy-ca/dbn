@@ -5,7 +5,8 @@
 This document proposes a comprehensive adaptation of the Databento Binary Encoding (DBN) format for cryptocurrency markets, addressing the unique requirements of 24/7 global trading across centralized exchanges (CEXs), decentralized exchanges (DEXs), and on-chain protocols.
 
 **Document Version**: 1.0
-**Date**: 2025-10-15
+**Date**: 2025-11-13
+**Status**: 🔵 Proposal / Design Phase
 **Base DBN Version**: 3
 **Target**: Crypto Lakehouse Architecture
 
