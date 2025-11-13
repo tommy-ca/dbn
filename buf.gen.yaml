@@ -7,7 +7,7 @@ managed:
 plugins:
   # Generate JSON Schema (official Buf plugin)
   - remote: buf.build/bufbuild/protoschema-jsonschema:v0.5.2
-    out: jsonschema
+    out: gen/jsonschema
     opt:
       - target=proto+json
 
