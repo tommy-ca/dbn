@@ -1,6 +1,41 @@
 # DBN Schema Management Guide
 
+**Date**: 2025-11-13
+**Status**: ✅ Complete
+
 This document describes how schemas are managed in the DBN project using Protocol Buffers and the Buf CLI.
+
+## Prerequisites
+
+Before working with DBN schemas, ensure you have the following installed:
+
+### Required
+- **Buf CLI** (v1.20.0 or later) - [Install Buf](https://buf.build/docs/installation)
+  ```bash
+  # macOS
+  brew install bufbuild/buf/buf
+
+  # Linux
+  curl -sSL "https://github.com/bufbuild/buf/releases/download/v1.20.0/buf-Linux-x86_64" -o /usr/local/bin/buf
+  chmod +x /usr/local/bin/buf
+
+  # Verify installation
+  buf --version
+  ```
+
+- **Go** (v1.19 or later) - For protoc-gen-go plugin
+  ```bash
+  go version  # verify installation
+  ```
+
+### Optional (for language-specific code generation)
+- **Python 3.8+** - For Python protobuf bindings
+- **Node.js 14+** - For TypeScript protobuf bindings
+- **Rust 1.56+** - If modifying Rust struct definitions
+
+### Recommended Tools
+- **VS Code** with Protobuf extension for editing .proto files
+- **Git** (v2.0+) for version control
 
 ## Overview
 
