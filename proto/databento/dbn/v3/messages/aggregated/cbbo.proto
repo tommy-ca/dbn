@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+package databento.dbn.v3.messages.aggregated;
+
+import "databento/dbn/v3/common/header.proto";
+import "databento/dbn/v3/common/price_levels.proto";
+import "databento/dbn/v3/enums/action.proto";
+import "databento/dbn/v3/enums/side.proto";
+
+option go_package = "github.com/databento/dbn/gen/go/databento/dbn/v3/messages/aggregated";
+option java_multiple_files = true;
+option java_package = "com.databento.dbn.v3.messages.aggregated";
+
+// CbboMsg represents Consolidated Best Bid/Offer.
+// Binary layout: 72 bytes, 8-byte aligned
+// RTypes: CBBO_1S (0xC0), CBBO_1M (0xC1)
+message CbboMsg {
+  // Common record header (16 bytes)
+  databento.dbn.v3.common.RecordHeader hd = 1;
+
+  // Last trade price (i64, fixed-width, signed)
+  // Fixed-point: divide by 1,000,000,000 to get decimal price
+  sfixed64 price = 2;
+
+  // Last trade quantity (u32, fixed-width)
+  fixed32 size = 3;
+
+  // Last trade aggressor side (c_char in binary)
+  databento.dbn.v3.enums.Side side = 4;
+
+  // Event flags bit field (u8 in binary, packed as u32)
+  uint32 flags = 5;
+
+  // End of interval timestamp (u64, fixed-width)
+  // UNIX epoch nanoseconds
+  fixed64 ts_recv = 6;
+
+  // Consolidated best bid/ask level (40 bytes)
+  databento.dbn.v3.common.ConsolidatedBidAskPair levels = 7;
+}
+
+// Cmbp1Msg represents Consolidated MBP depth 1.
+// Binary layout: 72 bytes, 8-byte aligned
+// RTypes: CMBP_1 (0xB1), TCBBO (0xC2)
+message Cmbp1Msg {
+  // Common record header (16 bytes)
+  databento.dbn.v3.common.RecordHeader hd = 1;
+
+  // Event price (i64, fixed-width, signed)
+  // Fixed-point: divide by 1,000,000,000 to get decimal price
+  sfixed64 price = 2;
+
+  // Event quantity (u32, fixed-width)
+  fixed32 size = 3;
+
+  // Book update action (c_char in binary)
+  databento.dbn.v3.enums.Action action = 4;
+
+  // Market side (c_char in binary)
+  databento.dbn.v3.enums.Side side = 5;
+
+  // Event flags bit field (u8 in binary, packed as u32)
+  uint32 flags = 6;
+
+  // Capture-server-received timestamp (u64, fixed-width)
+  // UNIX epoch nanoseconds
+  fixed64 ts_recv = 7;
+
+  // Matching-engine-sending timestamp delta (i32, signed fixed-width)
+  // Nanoseconds before ts_recv
+  sfixed32 ts_in_delta = 8;
+
+  // Consolidated price level (40 bytes)
+  databento.dbn.v3.common.ConsolidatedBidAskPair levels = 9;
+}

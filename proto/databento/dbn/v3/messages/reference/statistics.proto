@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package databento.dbn.v3.messages.reference;
+
+import "databento/dbn/v3/common/header.proto";
+
+option go_package = "github.com/databento/dbn/gen/go/databento/dbn/v3/messages/reference";
+option java_multiple_files = true;
+option java_package = "com.databento.dbn.v3.messages.reference";
+
+// StatMsg represents exchange statistics messages.
+// Size: 80 bytes (v3), 64 bytes (v1/v2)
+message StatMsg {
+  // Common record header
+  databento.dbn.v3.common.RecordHeader hd = 1;
+  // Capture-server-received timestamp (UNIX nanoseconds)
+  uint64 ts_recv = 2;
+  // Reference timestamp (UNIX nanoseconds)
+  uint64 ts_ref = 3;
+  // Price statistic (fixed-point, scale: 1e-9)
+  int64 price = 4;
+  // Quantity statistic (64-bit in v3)
+  int64 quantity = 5;
+  // Message sequence number
+  uint32 sequence = 6;
+  // Matching-engine-sending timestamp delta
+  int32 ts_in_delta = 7;
+  // Type of statistic
+  uint32 stat_type = 8;
+  // Channel ID
+  uint32 channel_id = 9;
+  // Update action (New/Delete)
+  uint32 update_action = 10;
+  // Additional flags
+  uint32 stat_flags = 11;
+}
