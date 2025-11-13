@@ -153,6 +153,32 @@ pub struct RecordHeader {
 | BBO_1S | 0xC3 | BBO 1-second | Bbo1S |
 | BBO_1M | 0xC4 | BBO 1-minute | Bbo1M |
 
+#### Reserved Crypto Extensions (In Progress)
+
+The following identifiers are reserved for the crypto-focused schemas defined in `00_requirements/CRYPTO_DBN_REQUIREMENTS_AND_SPECS.md`. They will be promoted to full schema sections once the binary/Rust/protobuf definitions are finalized.
+
+| RType | Value | Planned Record | Purpose |
+|-------|-------|----------------|---------|
+| FUNDING_RATE | 0xD0 | `FundingRateMsg` | Perpetual funding rates and predictions |
+| LIQUIDATION | 0xD1 | `LiquidationMsg` | Forced liquidations / ADL events |
+| MARK_PRICE | 0xD2 | `MarkPriceMsg` | Fair price feed for perps |
+| INDEX_PRICE | 0xD3 | `IndexPriceMsg` | Multi-venue spot index |
+| DEX_SWAP | 0xD4 | `DexSwapMsg` | AMM swap executions |
+| DEX_POOL_STATE | 0xD5 | `DexPoolStateMsg` | Liquidity snapshots / concentrates |
+| ORACLE_PRICE | 0xD6 | `OraclePriceMsg` | Chainlink/Pyth oracle updates |
+| CROSS_RATE | 0xD8 | `CrossRateMsg` | Cross-exchange spreads |
+| BASIS | 0xD9 | `BasisMsg` | Spot-vs-perp spreads |
+| STABLECOIN_PEG | 0xDA | `StablecoinPegMsg` | Peg deviations |
+| GAS_PRICE | 0xDB | `GasPriceMsg` | Network fee telemetry |
+| BLOCK_INFO | 0xDC | `BlockInfoMsg` | On-chain block metadata |
+| SMART_CONTRACT_EVENT | 0xDD | `SmartContractEventMsg` | Generic contract logs |
+| INSURANCE_FUND | 0xDE | `InsuranceFundMsg` | Fund balance tracking |
+| CLAWBACK | 0xDF | `ClawbackMsg` | Socialized losses |
+| DELISTING | 0xE0 | `DelistingMsg` | Venue delisting notices |
+| TOKEN_MIGRATION | 0xE1 | `TokenMigrationMsg` | Contract migrations |
+
+**Range 0xE2‑0xFF** remains reserved for future crypto and on-chain extensions.
+
 ---
 
 ## Schema Definitions
@@ -288,6 +314,8 @@ pub struct OhlcvMsg {
 **Size**: 520 bytes
 **Alignment**: 8 bytes
 **RType**: 0x13 (INSTRUMENT_DEF)
+
+> **Crypto delta roadmap:** DBNv4 work will extend this struct with explicit base/quote currency fields, venue slugs, contract type enumerations (spot, perpetual, dated future, DEX pool), and settlement asset metadata. Those additions are required for parity with cryptofeed/tardis symbol normalization and should be introduced here before updating protobuf/Rust bindings. Until then, continue using the DBNv3 string lengths (`SYMBOL_CSTR_LEN = 71`, `ASSET_CSTR_LEN = 11`) for `raw_symbol`, `leg_raw_symbol`, and `asset`.
 
 ```rust
 #[repr(C)]

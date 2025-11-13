@@ -261,6 +261,17 @@ enum RType {
 - Comments can be added incrementally
 - Focus on structural correctness first
 
+### 5. Crypto Feed Parity Tracker
+
+- Map each upcoming schema to an external normalized feed before writing protobuf definitions.
+- Source of truth lives in `00_requirements/CRYPTO_DBN_REQUIREMENTS_AND_SPECS.md` (parity table) and is summarized here for implementation planning:
+  - `FundingRateMsg` ↔ cryptofeed `funding`, Tardis `perpetuals_funding`
+  - `LiquidationMsg` ↔ cryptofeed `liquidations`, Tardis `liquidations*`
+  - `DexSwapMsg` / `DexPoolStateMsg` ↔ Tardis `dex_swaps` / `dex_liquidity`
+  - `MarkPriceMsg` / `IndexPriceMsg` ↔ cryptofeed `derivative_ticker`, Tardis `perpetuals_mark_price`
+  - `OraclePriceMsg` ↔ Tardis `oracle_prices`
+- A schema only exits Phase 2 when the parity mapping plus Buf-generated artifacts are documented in this file.
+
 ## Usage
 
 ### Linting Schemas
