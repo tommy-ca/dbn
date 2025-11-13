@@ -56,6 +56,13 @@ The DBN project uses a multi-format schema approach:
 
 Each pull request should link work back to a phase to keep provenance clear. For example, new crypto fields start in Phase 0/1 and then flow through Phase 2 and 3 when protobuf definitions and JSON Schemas are regenerated.
 
+### Crypto Schema Backlog (Phase 2 entry criteria)
+
+- **New protobuf packages** – Create `proto/databento/dbn/v3/messages/crypto/` for the RTypes listed in the canonical spec (0xD0‑0xE1). Each message should mirror the Rust structs in `00_requirements/CRYPTO_DBN_REQUIREMENTS_AND_SPECS.md`.
+- **Enum extensions** – Append the crypto instrument classes and RTypes to `enums/rtype.proto` and `enums/instrument.proto` once the canonical spec updates land.
+- **Shared crypto primitives** – Introduce reusable proto messages for hashes (32 bytes), addresses (20 bytes), and block metadata so DexSwap/Liquidation/GasPrice messages do not duplicate field definitions.
+- **Parity verification** – For every new schema, document which cryptofeed/tardis payload it replaces in `docs/specs/02_schema_implementation/IMPLEMENTATION_SUMMARY.md`.
+
 ## Directory Structure
 
 ```
