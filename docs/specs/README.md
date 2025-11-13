@@ -2,6 +2,19 @@
 
 This directory contains comprehensive schema specifications and documentation for the Databento Binary Encoding (DBN) format.
 
+## 🚀 Quick Start
+
+**New to DBN?** Follow this path:
+1. Start with [DBN_SCHEMA_SPECIFICATION.md](DBN_SCHEMA_SPECIFICATION.md) - Understand the base binary format
+2. For crypto data, read [CRYPTO_DBN_QUICK_REFERENCE.md](CRYPTO_DBN_QUICK_REFERENCE.md) - Get an overview
+3. Work with schemas: See [SCHEMA_MANAGEMENT.md](SCHEMA_MANAGEMENT.md) for setup and workflows
+
+**Setting up development?** Jump to [SCHEMA_MANAGEMENT.md](SCHEMA_MANAGEMENT.md#prerequisites) for prerequisites and installation.
+
+**Looking for examples?** See [examples/README.md](examples/README.md) for sample data and code.
+
+---
+
 ## Contents
 
 ### 📚 Core Documentation
