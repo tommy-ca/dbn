@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package databento.dbn.v3.common;
+
+option go_package = "github.com/databento/dbn/gen/go/databento/dbn/v3/common";
+option java_multiple_files = true;
+option java_package = "com.databento.dbn.v3.common";
+
+// RecordHeader is the common header for all DBN records.
+// Binary layout: 16 bytes, 8-byte aligned
+// C struct: #[repr(C)] with no padding
+message RecordHeader {
+  // Internal record length in 32-bit words (u8 in binary)
+  // Not typically used in protobuf serialization
+  uint32 length = 1;
+
+  // Record type identifier (u8 in binary)
+  // Maps to RType enum values (0x00-0xC4)
+  uint32 rtype = 2;
+
+  // Publisher ID assigned by Databento (u16 in binary)
+  uint32 publisher_id = 3;
+
+  // Numeric instrument ID (u32 in binary, fixed-width)
+  fixed32 instrument_id = 4;
+
+  // Matching-engine-received timestamp (u64 in binary, fixed-width)
+  // UNIX epoch nanoseconds
+  fixed64 ts_event = 5;
+}

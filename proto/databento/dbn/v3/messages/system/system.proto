@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package databento.dbn.v3.messages.system;
+
+import "databento/dbn/v3/common/header.proto";
+
+option go_package = "github.com/databento/dbn/gen/go/databento/dbn/v3/messages/system";
+option java_multiple_files = true;
+option java_package = "com.databento.dbn.v3.messages.system";
+
+// SystemMsg represents system messages and heartbeats.
+// Binary layout: 312 bytes (v2/v3), 80 bytes (v1), 8-byte aligned
+// RType: 0x02 (SYSTEM)
+message SystemMsg {
+  // Common record header (16 bytes)
+  databento.dbn.v3.common.RecordHeader hd = 1;
+
+  // System message text (c_char array in binary)
+  string msg = 2;
+
+  // System code (u32, fixed-width - heartbeat, etc.)
+  fixed32 code = 3;
+}
