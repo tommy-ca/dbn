@@ -39,3 +39,7 @@ yarn-error.log/
 
 # Generated code (regenerate with buf generate)
 gen/
+
+# Generated documentation outputs (Buf doc, etc.)
+docs/specs/03_generated_artifacts/generated/
+!docs/specs/03_generated_artifacts/generated/README.md

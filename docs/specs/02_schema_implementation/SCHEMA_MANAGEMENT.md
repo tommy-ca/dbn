@@ -23,7 +23,7 @@ Before working with DBN schemas, ensure you have the following installed:
   buf --version
   ```
 
-- **Go** (v1.19 or later) - For protoc-gen-go plugin
+- **Go** (v1.19 or later) - Required for Buf's Go codegen plugin
   ```bash
   go version  # verify installation
   ```

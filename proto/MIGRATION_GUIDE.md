@@ -156,27 +156,13 @@ databento.dbn.v3.enums.Side
 
 ### 3. Update Code Generation
 
-**Before:**
-```bash
-protoc --go_out=. dbn.proto
-```
+Run Buf from the repository root to regenerate every target (Go, Python, TS, JSON Schema, docs, etc.):
 
-**After (using buf):**
 ```bash
 buf generate
 ```
 
-**After (using protoc):**
-```bash
-# Generate all at once
-protoc --go_out=. \
-  databento/dbn/v3/**/*.proto
-
-# Or generate selectively
-protoc --go_out=. \
-  databento/dbn/v3/common/*.proto \
-  databento/dbn/v3/messages/market_data/*.proto
-```
+This replaces all previous direct Protocol Buffer compiler invocations.
 
 ### 4. Update Go Import Paths
 
@@ -343,13 +329,9 @@ import "databento/dbn/v3/common/header.proto": file does not exist
 ```
 
 **Solution:**
-Ensure your protoc or buf config points to `proto` as the import root:
+Ensure your Buf workspace declares `proto` as the module root:
 
-```bash
-# protoc
-protoc -I proto ...
-
-# buf.yaml
+```yaml
 modules:
   - path: proto
 ```
