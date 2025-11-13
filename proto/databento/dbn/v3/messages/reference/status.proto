@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package databento.dbn.v3.messages.reference;
+
+import "databento/dbn/v3/common/header.proto";
+import "databento/dbn/v3/enums/market.proto";
+
+option go_package = "github.com/databento/dbn/gen/go/databento/dbn/v3/messages/reference";
+option java_multiple_files = true;
+option java_package = "com.databento.dbn.v3.messages.reference";
+
+// StatusMsg represents trading status updates.
+// Binary layout: 48 bytes, 8-byte aligned
+// RType: 0x12 (STATUS)
+message StatusMsg {
+  // Common record header (16 bytes)
+  databento.dbn.v3.common.RecordHeader hd = 1;
+
+  // Capture-server-received timestamp (u64, fixed-width)
+  // UNIX epoch nanoseconds
+  fixed64 ts_recv = 2;
+
+  // Status action type (u16 in binary, packed as u32)
+  uint32 action = 3;
+
+  // Reason for status change (u16 in binary, packed as u32)
+  uint32 reason = 4;
+
+  // Trading event info (u16 in binary, packed as u32)
+  uint32 trading_event = 5;
+
+  // Is trading active (c_char in binary)
+  databento.dbn.v3.enums.TriState is_trading = 6;
+
+  // Is quoting active (c_char in binary)
+  databento.dbn.v3.enums.TriState is_quoting = 7;
+
+  // Is short sell restricted (c_char in binary)
+  databento.dbn.v3.enums.TriState is_short_sell_restricted = 8;
+}

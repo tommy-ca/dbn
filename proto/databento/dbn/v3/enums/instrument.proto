@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package databento.dbn.v3.enums;
+
+option go_package = "github.com/databento/dbn/gen/go/databento/dbn/v3/enums";
+option java_multiple_files = true;
+option java_package = "com.databento.dbn.v3.enums";
+
+// InstrumentClass - ASCII values from c_char binary field
+enum InstrumentClass {
+  INSTRUMENT_CLASS_INVALID = 0;
+  INSTRUMENT_CLASS_BOND = 66; // 'B'
+  INSTRUMENT_CLASS_CALL = 67; // 'C'
+  INSTRUMENT_CLASS_FUTURE = 70; // 'F'
+  INSTRUMENT_CLASS_STOCK = 75; // 'K'
+  INSTRUMENT_CLASS_MIXED_SPREAD = 77; // 'M'
+  INSTRUMENT_CLASS_PUT = 80; // 'P'
+  INSTRUMENT_CLASS_FUTURE_SPREAD = 83; // 'S'
+  INSTRUMENT_CLASS_OPTION_SPREAD = 84; // 'T'
+  INSTRUMENT_CLASS_FX_SPOT = 88; // 'X'
+  INSTRUMENT_CLASS_COMMODITY_SPOT = 89; // 'Y'
+}
+
+// MatchAlgorithm - ASCII values from c_char binary field
+enum MatchAlgorithm {
+  MATCH_ALGORITHM_INVALID = 0;
+  MATCH_ALGORITHM_FIFO = 70; // 'F'
+  MATCH_ALGORITHM_CONFIGURABLE = 75; // 'K'
+  MATCH_ALGORITHM_PRO_RATA = 67; // 'C'
+  MATCH_ALGORITHM_FIFO_LMM = 84; // 'T'
+  MATCH_ALGORITHM_THRESHOLD_PRO_RATA = 79; // 'O'
+  MATCH_ALGORITHM_FIFO_TOP_LMM = 83; // 'S'
+  MATCH_ALGORITHM_THRESHOLD_PRO_RATA_LMM = 81; // 'Q'
+  MATCH_ALGORITHM_EURODOLLAR_OPTIONS = 89; // 'Y'
+  MATCH_ALGORITHM_PRIORITY_CUSTOMER_FIFO = 80; // 'P'
+  MATCH_ALGORITHM_VWAP = 86; // 'V'
+}

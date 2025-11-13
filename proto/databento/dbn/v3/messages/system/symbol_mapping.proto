@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package databento.dbn.v3.messages.system;
+
+import "databento/dbn/v3/common/header.proto";
+
+option go_package = "github.com/databento/dbn/gen/go/databento/dbn/v3/messages/system";
+option java_multiple_files = true;
+option java_package = "com.databento.dbn.v3.messages.system";
+
+// SymbolMappingMsg represents symbol mapping information.
+// Binary layout: 160 bytes (v2/v3), 80 bytes (v1), 8-byte aligned
+// RType: 0x04 (SYMBOL_MAPPING)
+message SymbolMappingMsg {
+  // Common record header (16 bytes)
+  databento.dbn.v3.common.RecordHeader hd = 1;
+
+  // Input symbology type (u32, fixed-width)
+  fixed32 stype_in = 2;
+
+  // Input symbol (c_char array in binary)
+  string stype_in_symbol = 3;
+
+  // Output symbology type (u32, fixed-width)
+  fixed32 stype_out = 4;
+
+  // Output symbol (c_char array in binary)
+  string stype_out_symbol = 5;
+
+  // Mapping start timestamp (u64, fixed-width)
+  // UNIX epoch nanoseconds
+  fixed64 start_ts = 6;
+
+  // Mapping end timestamp (u64, fixed-width)
+  // UNIX epoch nanoseconds
+  fixed64 end_ts = 7;
+}

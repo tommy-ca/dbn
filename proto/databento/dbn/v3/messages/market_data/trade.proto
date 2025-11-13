@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package databento.dbn.v3.messages.market_data;
+
+import "databento/dbn/v3/common/header.proto";
+import "databento/dbn/v3/enums/action.proto";
+import "databento/dbn/v3/enums/side.proto";
+
+option go_package = "github.com/databento/dbn/gen/go/databento/dbn/v3/messages/market_data";
+option java_multiple_files = true;
+option java_package = "com.databento.dbn.v3.messages.market_data";
+
+// TradeMsg represents a trade execution message.
+// Binary layout: 80 bytes, 8-byte aligned
+// RType: 0x00 (MBP_0)
+message TradeMsg {
+  // Common record header (16 bytes)
+  databento.dbn.v3.common.RecordHeader hd = 1;
+
+  // Trade price (i64, fixed-width, signed)
+  // Fixed-point: divide by 1,000,000,000 to get decimal price
+  sfixed64 price = 2;
+
+  // Trade quantity (u32, fixed-width)
+  fixed32 size = 3;
+
+  // Event action (c_char in binary)
+  // Always ACTION_TRADE for trade messages
+  databento.dbn.v3.enums.Action action = 4;
+
+  // Aggressor side (c_char in binary)
+  databento.dbn.v3.enums.Side side = 5;
+
+  // Event flags bit field (u8 in binary, packed as u32)
+  uint32 flags = 6;
+
+  // Book depth level (u8 in binary, packed as u32)
+  uint32 depth = 7;
+
+  // Capture-server-received timestamp (u64, fixed-width)
+  // UNIX epoch nanoseconds
+  fixed64 ts_recv = 8;
+
+  // Matching-engine-sending timestamp delta (i32, signed fixed-width)
+  // Nanoseconds before ts_recv
+  sfixed32 ts_in_delta = 9;
+
+  // Message sequence number (u32, fixed-width)
+  fixed32 sequence = 10;
+}
