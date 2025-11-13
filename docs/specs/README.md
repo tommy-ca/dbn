@@ -272,17 +272,7 @@ buf generate             # Generate code
 buf breaking --against . # Check compatibility
 ```
 
-### Protobuf Compiler (protoc)
-
-Alternative to Buf CLI for code generation:
-
-```bash
-protoc --proto_path=proto \
-       --go_out=. \
-       --python_out=. \
-       --js_out=. \
-       proto/databento/dbn/v3/**/*.proto
-```
+Buf is the single source of truth for generation—avoid calling `protoc` directly so every artifact stays consistent with the managed templates.
 
 ### JSON Schema Validators
 

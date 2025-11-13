@@ -180,13 +180,8 @@ import "databento/dbn/v3/enums/rtype.proto";
 ### Generating Code
 
 ```bash
-# Generate Go code
+# Generate Go/Python/TS/JSON Schema artifacts
 buf generate --template buf.gen.yaml
-
-# Or using protoc
-protoc --go_out=. \
-  --go_opt=paths=source_relative \
-  databento/dbn/v3/messages/market_data/mbo.proto
 ```
 
 ### Importing in Your Schemas
