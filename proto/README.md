@@ -11,6 +11,17 @@ The protobuf schemas in this directory provide:
 - **JSON schema generation** for validation and documentation
 - **Schema versioning and compatibility checking** via buf CLI
 
+## Role in the Specs-Driven Flow
+
+Protobuf files represent **Phase 2** of the DBN specs-driven development lifecycle:
+
+1. **Start from Phase 1 artifacts** – Every change must be grounded in the canonical binary spec documented in [`docs/specs/01_canonical_spec/DBN_SCHEMA_SPECIFICATION.md`](../docs/specs/01_canonical_spec/DBN_SCHEMA_SPECIFICATION.md).
+2. **Update `.proto` files and Buf configs** – Reflect the binary change here, keeping packages, field names, and numbering consistent with the spec.
+3. **Regenerate derived assets (Phase 3)** – Run `buf generate proto` to refresh JSON Schema (`gen/jsonschema/`), SDKs (`gen/*`), and optionally docs (`docs/specs/03_generated_artifacts/generated/`).
+4. **Validate & document** – Reference updates in [`docs/specs/02_schema_implementation/SCHEMA_MANAGEMENT.md`](../docs/specs/02_schema_implementation/SCHEMA_MANAGEMENT.md) and publish sample payloads in `docs/specs/03_generated_artifacts/examples/` when needed.
+
+Keeping this order ensures downstream clients can trace every protobuf edit back to an approved specification change.
+
 ## Structure
 
 Schemas are organized in a **hierarchical structure** for better maintainability:
@@ -126,7 +137,7 @@ This will generate:
 - Go code → `gen/go/`
 - Python code → `gen/python/`
 - TypeScript code → `gen/ts/`
-- HTML documentation → `docs/specs/`
+- HTML documentation → `docs/specs/03_generated_artifacts/generated/`
 
 ### Format
 ```bash
@@ -150,7 +161,7 @@ While these protobuf schemas closely mirror the binary DBN format, there are som
 
 ## References
 
-- [DBN Specification](../docs/specs/DBN_SCHEMA_SPECIFICATION.md)
+- [DBN Specification](../docs/specs/01_canonical_spec/DBN_SCHEMA_SPECIFICATION.md)
 - [Databento Documentation](https://databento.com/docs/standards-and-conventions/databento-binary-encoding)
 - [Buf Documentation](https://buf.build/docs)
 - [Protocol Buffers](https://protobuf.dev/)

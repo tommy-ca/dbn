@@ -18,25 +18,28 @@ Created organized schema management directory structure:
 dbn/
 ├── buf.yaml                           # Buf workspace configuration
 ├── buf.gen.yaml                       # Code generation settings
+├── proto/                             # Hierarchical protobuf schemas
+│   └── databento/dbn/v3/...
 ├── docs/
 │   └── specs/
-│       ├── README.md                  # Schema overview
-│       ├── SCHEMA_MANAGEMENT.md       # Management guide
-│       ├── proto/
-│       │   ├── dbn.proto             # Main protobuf schema
-│       │   └── README.md             # Protobuf documentation
-│       └── examples/                  # Sample messages (empty)
+│       ├── 00_requirements/
+│       ├── 01_canonical_spec/
+│       ├── 02_schema_implementation/
+│       ├── 03_generated_artifacts/
+│       └── 04_validation/
 ├── gen/
-│   └── jsonschema/
-│       └── *.schema.json             # JSON schemas
+│   ├── jsonschema/
+│   ├── go/
+│   ├── python/
+│   └── ts/
 └── .gitignore                         # Updated with gen/ ignore
 ```
 
 ### 2. Protocol Buffer Schemas
 
-**File:** `docs/specs/proto/dbn.proto`
+**Location:** `proto/databento/dbn/v3/`
 
-Comprehensive protobuf definitions for all 15 DBN message types:
+Comprehensive protobuf definitions for all 15 DBN message types split across modular files:
 
 #### Core Market Data Messages
 - `RecordHeader` - 16-byte common header
@@ -91,7 +94,7 @@ Comprehensive protobuf definitions for all 15 DBN message types:
 ```yaml
 version: v2
 modules:
-  - path: docs/specs/proto
+  - path: proto
     name: buf.build/databento/dbn
 lint:
   use:
@@ -104,9 +107,13 @@ lint:
     - COMMENT_ENUM
     - COMMENT_ENUM_VALUE
     - COMMENT_MESSAGE
+  ignore:
+    - proto/vendor
 breaking:
   use:
     - FILE
+  ignore:
+    - proto/vendor
 ```
 
 **Features:**
@@ -120,25 +127,35 @@ breaking:
 version: v2
 managed:
   enabled: true
+  override:
+    - file_option: go_package_prefix
+      value: github.com/databento/dbn/gen/go
 plugins:
-  - remote: buf.build/community/timostamm-protobuf-ts
+  - remote: buf.build/bufbuild/protoschema-jsonschema:v0.5.2
     out: gen/jsonschema
-  - remote: buf.build/bufbuild/buf-plugin-doc
-    out: docs/specs
+    opt:
+      - target=proto+json
   - remote: buf.build/protocolbuffers/go
     out: gen/go
+    opt:
+      - paths=source_relative
   - remote: buf.build/protocolbuffers/python
     out: gen/python
+    opt:
+      - pyi_out=gen/python
   - remote: buf.build/community/timostamm-protobuf-ts
     out: gen/ts
+    opt:
+      - long_type_string
+      - optimize_code_size
 ```
 
 **Generates:**
 - JSON schemas → `gen/jsonschema/`
-- HTML documentation → `docs/specs/`
 - Go code → `gen/go/`
 - Python code → `gen/python/`
 - TypeScript → `gen/ts/`
+- Optional HTML/docs → `docs/specs/03_generated_artifacts/generated/`
 
 ### 4. JSON Schema
 
@@ -167,7 +184,7 @@ Example JSON Schema for `MboMsg` with:
   - Tool usage guide
   - Quick reference
 
-- **`docs/specs/SCHEMA_MANAGEMENT.md`** - Complete management guide
+- **`docs/specs/02_schema_implementation/SCHEMA_MANAGEMENT.md`** - Complete management guide
   - Schema workflow
   - Buf CLI usage
   - Versioning strategy
@@ -175,7 +192,7 @@ Example JSON Schema for `MboMsg` with:
   - Troubleshooting
 
 #### Format-Specific Docs
-- **`docs/specs/proto/README.md`** - Protobuf-specific documentation
+- **`proto/README.md`** - Protobuf-specific documentation
 - **JSON Schema usage guide** – See "JSON Schemas" in `docs/specs/README.md`
 
 ### 6. Updated .gitignore
@@ -226,13 +243,13 @@ enum RType {
 
 ### 3. Directory Organization
 
-**Decision:** Place schemas in `docs/specs/` with subdirectories by format
+**Decision:** Keep protobuf sources under `proto/` and organize supporting docs in phase-specific folders inside `docs/specs/`
 
 **Rationale:**
-- Separates generated code (`gen/`) from specifications (`docs/`)
-- Groups related schemas by technology (proto, jsonschema)
-- Makes it clear which files are source vs. generated
-- Follows common open-source project patterns
+- Separates the Buf module (`proto/`) from narrative specs and requirements
+- Keeps generated artifacts (`gen/`, `03_generated_artifacts/`) distinct from source schemas
+- Gives reviewers a predictable path that mirrors the specs-driven development phases
+- Matches how the Buf module path is declared in `buf.yaml`
 
 ### 4. Linting Configuration
 
@@ -273,7 +290,7 @@ buf generate
 - `gen/python/` - Python classes
 - `gen/ts/` - TypeScript types
 - `gen/jsonschema/` - JSON schemas
-- `docs/specs/` - HTML documentation
+- `docs/specs/03_generated_artifacts/generated/` - HTML documentation
 
 *Note: Code generation requires Buf authentication for remote plugins*
 
@@ -429,9 +446,9 @@ cd gen/python && python -m pytest
 ## References
 
 ### Internal Documentation
-- [DBN Binary Specification](DBN_SCHEMA_SPECIFICATION.md)
+- [DBN Binary Specification](../01_canonical_spec/DBN_SCHEMA_SPECIFICATION.md)
 - [Schema Management Guide](SCHEMA_MANAGEMENT.md)
-- [Crypto Requirements](CRYPTO_DBN_REQUIREMENTS_AND_SPECS.md)
+- [Crypto Requirements](../00_requirements/CRYPTO_DBN_REQUIREMENTS_AND_SPECS.md)
 
 ### External Resources
 - [Buf Documentation](https://buf.build/docs)

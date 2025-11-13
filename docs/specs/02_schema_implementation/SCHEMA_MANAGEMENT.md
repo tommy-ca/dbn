@@ -42,8 +42,19 @@ Before working with DBN schemas, ensure you have the following installed:
 The DBN project uses a multi-format schema approach:
 
 1. **Rust structs** (`rust/dbn/src/record.rs`) - Primary source of truth for binary format
-2. **Protocol Buffers** (`docs/specs/proto/`) - Language-agnostic schema definitions
+2. **Protocol Buffers** (`proto/`) - Language-agnostic schema definitions
 3. **JSON Schemas** (`gen/jsonschema/`) - Validation schemas for JSON format
+
+## Specs-Driven Development Flow
+
+| Phase | Goal | Primary Artifacts | Key References |
+| --- | --- | --- | --- |
+| 0. Requirements | Capture latency, regulatory, and product constraints | `00_requirements/CRYPTO_DBN_QUICK_REFERENCE.md`, `00_requirements/CRYPTO_DBN_REQUIREMENTS_AND_SPECS.md` | Business & product owners |
+| 1. Canonical Spec | Maintain the binary DBN contract | `01_canonical_spec/DBN_SCHEMA_SPECIFICATION.md` | DBN spec working group |
+| 2. Schema Implementation | Translate spec changes into protobuf + Buf configs | `proto/`, this guide, `proto/README.md` | Schema engineers |
+| 3. Generated Artifacts & Validation | Produce JSON Schema + SDKs, verify with fixtures | `gen/`, `docs/specs/03_generated_artifacts/generated/`, `docs/specs/03_generated_artifacts/examples/` | Platform + client teams |
+
+Each pull request should link work back to a phase to keep provenance clear. For example, new crypto fields start in Phase 0/1 and then flow through Phase 2 and 3 when protobuf definitions and JSON Schemas are regenerated.
 
 ## Directory Structure
 
@@ -51,15 +62,24 @@ The DBN project uses a multi-format schema approach:
 dbn/
 ├── buf.yaml                    # Buf workspace configuration
 ├── buf.gen.yaml                # Code generation configuration
+├── proto/                      # Protobuf schema definitions
+│   └── databento/dbn/v3/
+│       ├── common/
+│       ├── enums/
+│       ├── messages/{aggregated,market_data,reference,system}
+│       └── metadata/
 ├── docs/
 │   └── specs/
-│       ├── proto/              # Protobuf schema definitions
-│       │   ├── dbn.proto      # Main DBN v3 schema
-│       │   └── README.md
-│       └── examples/           # Example messages
+│       ├── 00_requirements/    # Market requirements + briefs
+│       ├── 01_canonical_spec/  # Binary DBN spec
+│       ├── 02_schema_implementation/
+│       ├── 03_generated_artifacts/
+│       └── 04_validation/
 ├── gen/
-│   └── jsonschema/             # JSON schema definitions
-│       └── *.schema.json
+│   ├── jsonschema/             # JSON schema definitions
+│   ├── go/
+│   ├── python/
+│   └── ts/
 └── rust/
     └── dbn/
         └── src/
@@ -253,7 +273,7 @@ pub struct MyNewMsg {
 }
 ```
 
-2. **Add to protobuf** (`docs/specs/proto/dbn.proto`):
+2. **Add to protobuf** (`proto/databento/dbn/v3/...`):
 
 ```protobuf
 message MyNewMsg {
@@ -310,7 +330,7 @@ buf breaking --against '.git#branch=main'
 4. **Update documentation**:
    - Update field comments
    - Update README files
-   - Update DBN_SCHEMA_SPECIFICATION.md
+   - Update ../01_canonical_spec/DBN_SCHEMA_SPECIFICATION.md
 
 ### Validating Consistency
 
@@ -371,12 +391,12 @@ cd gen/go && go test ./...
 ### Documentation
 
 1. **Keep specs up-to-date**
-   - DBN_SCHEMA_SPECIFICATION.md
+   - ../01_canonical_spec/DBN_SCHEMA_SPECIFICATION.md
    - README files in each directory
    - Inline protobuf comments
 
 2. **Provide examples**
-   - Sample messages in `docs/specs/examples/`
+   - Sample messages in `docs/specs/03_generated_artifacts/examples/`
    - Usage examples in README
    - Test fixtures
 
@@ -413,7 +433,7 @@ lint:
 buf lint --error-format=json
 
 # Check specific file
-buf lint docs/specs/proto/dbn.proto
+buf lint proto
 
 # Diff against baseline
 buf breaking --against '.git#branch=main' --error-format=json
@@ -424,7 +444,7 @@ buf breaking --against '.git#branch=main' --error-format=json
 - [Buf CLI Documentation](https://buf.build/docs)
 - [Protocol Buffers Guide](https://protobuf.dev/)
 - [JSON Schema Specification](https://json-schema.org/)
-- [DBN Binary Format](DBN_SCHEMA_SPECIFICATION.md)
+- [DBN Binary Format](../01_canonical_spec/DBN_SCHEMA_SPECIFICATION.md)
 - [Databento Docs](https://databento.com/docs)
 
 ## Contributing
