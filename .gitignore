@@ -39,7 +39,3 @@ yarn-error.log/
 
 # Generated code (regenerate with buf generate)
 gen/
-
-# Generated JSON schemas (regenerate with buf generate)
-jsonschema/
-
