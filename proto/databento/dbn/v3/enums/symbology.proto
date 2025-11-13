@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package databento.dbn.v3.enums;
+
+option go_package = "github.com/databento/dbn/gen/go/databento/dbn/v3/enums";
+option java_multiple_files = true;
+option java_package = "com.databento.dbn.v3.enums";
+
+// SType - Symbology type
+enum SType {
+  STYPE_INSTRUMENT_ID = 0; // Numeric ID
+  STYPE_RAW_SYMBOL = 1; // Original publisher symbols
+  STYPE_CONTINUOUS = 3; // Continuous contracts
+  STYPE_PARENT = 4; // Parent symbols (e.g., ES.FUT)
+  STYPE_NASDAQ_SYMBOL = 5; // NASDAQ suffixes
+  STYPE_CMS_SYMBOL = 6; // CMS suffixes
+  STYPE_ISIN = 7; // ISO 6166
+  STYPE_US_CODE = 8; // CUSIP codes
+  STYPE_BBG_COMP_ID = 9; // Bloomberg composite ID
+  STYPE_BBG_COMP_TICKER = 10; // Bloomberg composite ticker
+  STYPE_FIGI = 11; // Bloomberg FIGI
+  STYPE_FIGI_TICKER = 12; // Bloomberg FIGI ticker
+}

@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package databento.dbn.v3.enums;
+
+option go_package = "github.com/databento/dbn/gen/go/databento/dbn/v3/enums";
+option java_multiple_files = true;
+option java_package = "com.databento.dbn.v3.enums";
+
+// TriState represents a three-state boolean
+// Binary representation: single ASCII character (c_char)
+enum TriState {
+  TRISTATE_INVALID = 0; // Invalid/unset
+  TRISTATE_NOT_AVAILABLE = 126; // '~' - Not available
+  TRISTATE_NO = 78; // 'N' - No/False
+  TRISTATE_YES = 89; // 'Y' - Yes/True
+}
+
+// SecurityUpdateAction represents instrument definition update actions
+// Binary representation: single ASCII character (c_char)
+enum SecurityUpdateAction {
+  SECURITY_UPDATE_INVALID = 0; // Invalid/unset
+  SECURITY_UPDATE_ADD = 65; // 'A' - Add new instrument
+  SECURITY_UPDATE_MODIFY = 77; // 'M' - Modify existing instrument
+  SECURITY_UPDATE_DELETE = 68; // 'D' - Delete instrument
+}
