@@ -1,0 +1,511 @@
+syntax = "proto3";
+
+package databento.dbn.v3;
+
+option go_package = "github.com/databento/dbn/gen/go/databento/dbn/v3";
+option java_multiple_files = true;
+option java_outer_classname = "DbnProto";
+option java_package = "com.databento.dbn.v3";
+
+// RecordHeader is the common header for all DBN records.
+// All records start with this 16-byte header.
+message RecordHeader {
+  // The record type identifier (RType enum value)
+  uint32 rtype = 1;
+  // The publisher ID assigned by Databento
+  uint32 publisher_id = 2;
+  // The numeric instrument ID
+  uint32 instrument_id = 3;
+  // The matching-engine-received timestamp (UNIX nanoseconds)
+  uint64 ts_event = 4;
+}
+
+// MboMsg represents a market-by-order (MBO) tick message.
+// Size: 80 bytes (C struct with #[repr(C)])
+message MboMsg {
+  RecordHeader hd = 1;
+  uint64 order_id = 2;
+  // Price in fixed-point format (scale: 1e-9)
+  int64 price = 3;
+  uint32 size = 4;
+  uint32 flags = 5;
+  uint32 channel_id = 6;
+  // Action: A/C/M/R/T/F/N
+  string action = 7;
+  // Side: A/B/N
+  string side = 8;
+  // Capture-server-received timestamp (UNIX nanoseconds)
+  uint64 ts_recv = 9;
+  int32 ts_in_delta = 10;
+  uint32 sequence = 11;
+}
+
+// TradeMsg represents a trade message.
+// Size: 80 bytes
+message TradeMsg {
+  RecordHeader hd = 1;
+  // Trade price (fixed-point, scale: 1e-9)
+  int64 price = 2;
+  uint32 size = 3;
+  // Always 'T' for trades
+  string action = 4;
+  // Aggressor side: A/B/N
+  string side = 5;
+  uint32 flags = 6;
+  uint32 depth = 7;
+  uint64 ts_recv = 8;
+  int32 ts_in_delta = 9;
+  uint32 sequence = 10;
+}
+
+// BidAskPair represents a single price level.
+// Size: 32 bytes
+message BidAskPair {
+  // Bid price (fixed-point, scale: 1e-9)
+  int64 bid_px = 1;
+  // Ask price (fixed-point, scale: 1e-9)
+  int64 ask_px = 2;
+  uint32 bid_sz = 3;
+  uint32 ask_sz = 4;
+  uint32 bid_ct = 5;
+  uint32 ask_ct = 6;
+}
+
+// Mbp1Msg represents market-by-price with depth 1.
+// Size: 104 bytes
+message Mbp1Msg {
+  RecordHeader hd = 1;
+  // Price (fixed-point, scale: 1e-9)
+  int64 price = 2;
+  uint32 size = 3;
+  // Action: A/C/M/R/T
+  string action = 4;
+  // Side: A/B/N
+  string side = 5;
+  uint32 flags = 6;
+  uint32 depth = 7;
+  uint64 ts_recv = 8;
+  int32 ts_in_delta = 9;
+  uint32 sequence = 10;
+  // Top of book (1 level)
+  repeated BidAskPair levels = 11;
+}
+
+// Mbp10Msg represents market-by-price with depth 10.
+// Size: 424 bytes
+message Mbp10Msg {
+  RecordHeader hd = 1;
+  int64 price = 2;
+  uint32 size = 3;
+  string action = 4;
+  string side = 5;
+  uint32 flags = 6;
+  uint32 depth = 7;
+  uint64 ts_recv = 8;
+  int32 ts_in_delta = 9;
+  uint32 sequence = 10;
+  // Top 10 levels
+  repeated BidAskPair levels = 11;
+}
+
+// OhlcvMsg represents OHLCV (candlestick) data.
+// Size: 56 bytes
+// RTypes: OHLCV_1S (0x20), OHLCV_1M (0x21), OHLCV_1H (0x22), OHLCV_1D (0x23), OHLCV_EOD (0x24)
+message OhlcvMsg {
+  RecordHeader hd = 1;
+  // Open price (fixed-point, scale: 1e-9)
+  int64 open = 2;
+  // High price (fixed-point, scale: 1e-9)
+  int64 high = 3;
+  // Low price (fixed-point, scale: 1e-9)
+  int64 low = 4;
+  // Close price (fixed-point, scale: 1e-9)
+  int64 close = 5;
+  uint64 volume = 6;
+}
+
+// StatusMsg represents trading status updates.
+// Size: 48 bytes
+message StatusMsg {
+  RecordHeader hd = 1;
+  uint64 ts_recv = 2;
+  uint32 action = 3;
+  uint32 reason = 4;
+  uint32 trading_event = 5;
+  // Y/N/~ (tristate)
+  string is_trading = 6;
+  string is_quoting = 7;
+  string is_short_sell_restricted = 8;
+}
+
+// InstrumentDefMsg represents instrument definition/metadata.
+// Size: 520 bytes (v3), 400 bytes (v2), 360 bytes (v1)
+message InstrumentDefMsg {
+  RecordHeader hd = 1;
+  uint64 ts_recv = 2;
+
+  // Price-related fields (all fixed-point, scale: 1e-9)
+  int64 min_price_increment = 3;
+  int64 display_factor = 4;
+  int64 high_limit_price = 5;
+  int64 low_limit_price = 6;
+  int64 max_price_variation = 7;
+  int64 unit_of_measure_qty = 8;
+  int64 min_price_increment_amount = 9;
+  int64 price_ratio = 10;
+  int64 strike_price = 11;
+  int64 leg_price = 12;
+  int64 leg_delta = 13;
+
+  // Timestamp fields (UNIX nanos)
+  uint64 expiration = 14;
+  uint64 activation = 15;
+
+  // Integer fields
+  uint64 raw_instrument_id = 16;
+  int32 inst_attrib_value = 17;
+  uint32 underlying_id = 18;
+  int32 market_depth_implied = 19;
+  int32 market_depth = 20;
+  uint32 market_segment_id = 21;
+  uint32 max_trade_vol = 22;
+  int32 min_lot_size = 23;
+  int32 min_lot_size_block = 24;
+  int32 min_lot_size_round_lot = 25;
+  uint32 min_trade_vol = 26;
+  int32 contract_multiplier = 27;
+  int32 decay_quantity = 28;
+  int32 original_contract_size = 29;
+
+  // Leg fields (for multi-leg strategies)
+  uint32 leg_instrument_id = 30;
+  int32 leg_ratio_price_numerator = 31;
+  int32 leg_ratio_price_denominator = 32;
+  int32 leg_ratio_qty_numerator = 33;
+  int32 leg_ratio_qty_denominator = 34;
+  uint32 leg_underlying_id = 35;
+
+  // Small integer fields
+  int32 appl_id = 36;
+  uint32 maturity_year = 37;
+  uint32 decay_start_date = 38;
+  uint32 channel_id = 39;
+  uint32 leg_count = 40;
+  uint32 leg_index = 41;
+
+  // Fixed-length string fields
+  string currency = 42;
+  string settl_currency = 43;
+  string secsubtype = 44;
+  string raw_symbol = 45;
+  string group = 46;
+  string exchange = 47;
+  string asset = 48;
+  string cfi = 49;
+  string security_type = 50;
+  string unit_of_measure = 51;
+  string underlying = 52;
+  string strike_price_currency = 53;
+  string leg_raw_symbol = 54;
+
+  // Character flags
+  // B/C/F/K/M/P/S/T/X/Y
+  string instrument_class = 55;
+  // F/K/C/T/O/S/Q/Y/P/V
+  string match_algorithm = 56;
+  // A/M/D
+  string security_update_action = 57;
+  // Y/N
+  string user_defined_instrument = 58;
+  string leg_instrument_class = 59;
+  string leg_side = 60;
+
+  // Byte fields
+  uint32 main_fraction = 61;
+  uint32 price_display_format = 62;
+  uint32 sub_fraction = 63;
+  uint32 underlying_product = 64;
+  uint32 maturity_month = 65;
+  uint32 maturity_day = 66;
+  uint32 maturity_week = 67;
+  int32 contract_multiplier_unit = 68;
+  int32 flow_schedule_type = 69;
+  uint32 tick_rule = 70;
+}
+
+// StatMsg represents statistics messages.
+// Size: 80 bytes (v3), 64 bytes (v1/v2)
+message StatMsg {
+  RecordHeader hd = 1;
+  uint64 ts_recv = 2;
+  uint64 ts_ref = 3;
+  // Price statistic (fixed-point, scale: 1e-9)
+  int64 price = 4;
+  // Quantity statistic (64-bit in v3)
+  int64 quantity = 5;
+  uint32 sequence = 6;
+  int32 ts_in_delta = 7;
+  uint32 stat_type = 8;
+  uint32 channel_id = 9;
+  uint32 update_action = 10;
+  uint32 stat_flags = 11;
+}
+
+// ImbalanceMsg represents order imbalance information.
+// Size: 120 bytes
+message ImbalanceMsg {
+  RecordHeader hd = 1;
+  uint64 ts_recv = 2;
+
+  // Price fields (all fixed-point, scale: 1e-9)
+  int64 ref_price = 3;
+  uint64 auction_time = 4;
+  int64 cont_book_clr_price = 5;
+  int64 auct_interest_clr_price = 6;
+  int64 ssr_filling_price = 7;
+  int64 ind_match_price = 8;
+  int64 upper_collar = 9;
+  int64 lower_collar = 10;
+
+  // Quantity fields
+  uint32 paired_qty = 11;
+  uint32 total_imbalance_qty = 12;
+  uint32 market_imbalance_qty = 13;
+  uint32 unpaired_qty = 14;
+
+  // Character fields
+  string auction_type = 15;
+  string side = 16;
+  string unpaired_side = 17;
+  string significant_imbalance = 18;
+
+  // Status fields
+  uint32 auction_status = 19;
+  uint32 freeze_status = 20;
+  uint32 num_extensions = 21;
+}
+
+// ConsolidatedBidAskPair represents a price level from multiple venues.
+// Size: 40 bytes
+message ConsolidatedBidAskPair {
+  int64 bid_px = 1;
+  int64 ask_px = 2;
+  uint32 bid_sz = 3;
+  uint32 ask_sz = 4;
+  // Best bid publisher ID
+  uint32 bid_pb = 5;
+  // Best ask publisher ID
+  uint32 ask_pb = 6;
+}
+
+// BboMsg represents Best Bid/Offer messages.
+// Size: 72 bytes
+message BboMsg {
+  RecordHeader hd = 1;
+  // Last trade price (fixed-point, scale: 1e-9)
+  int64 price = 2;
+  uint32 size = 3;
+  string side = 4;
+  uint32 flags = 5;
+  uint64 ts_recv = 6;
+  uint32 sequence = 7;
+  // Best bid/ask (1 level)
+  BidAskPair levels = 8;
+}
+
+// Cmbp1Msg represents Consolidated MBP depth 1.
+// Size: 72 bytes
+message Cmbp1Msg {
+  RecordHeader hd = 1;
+  int64 price = 2;
+  uint32 size = 3;
+  string action = 4;
+  string side = 5;
+  uint32 flags = 6;
+  uint64 ts_recv = 7;
+  int32 ts_in_delta = 8;
+  // Consolidated level (1 level)
+  ConsolidatedBidAskPair levels = 9;
+}
+
+// CbboMsg represents Consolidated Best Bid/Offer.
+// Size: 72 bytes
+message CbboMsg {
+  RecordHeader hd = 1;
+  // Last trade price (fixed-point, scale: 1e-9)
+  int64 price = 2;
+  uint32 size = 3;
+  string side = 4;
+  uint32 flags = 5;
+  uint64 ts_recv = 6;
+  // Consolidated level
+  ConsolidatedBidAskPair levels = 7;
+}
+
+// ErrorMsg represents error messages from the gateway.
+// Size: 312 bytes (v2/v3), 80 bytes (v1)
+message ErrorMsg {
+  RecordHeader hd = 1;
+  // Error message text
+  string err = 2;
+  uint32 code = 3;
+  // Last in chain flag
+  bool is_last = 4;
+}
+
+// SystemMsg represents system messages and heartbeats.
+// Size: 312 bytes (v2/v3), 80 bytes (v1)
+message SystemMsg {
+  RecordHeader hd = 1;
+  // System message text
+  string msg = 2;
+  // System code (heartbeat, etc.)
+  uint32 code = 3;
+}
+
+// SymbolMappingMsg represents symbol mapping information.
+// Size: 160 bytes (v2/v3), 80 bytes (v1)
+message SymbolMappingMsg {
+  RecordHeader hd = 1;
+  uint32 stype_in = 2;
+  string stype_in_symbol = 3;
+  uint32 stype_out = 4;
+  string stype_out_symbol = 5;
+  // Mapping start timestamp (UNIX nanos)
+  uint64 start_ts = 6;
+  // Mapping end timestamp (UNIX nanos)
+  uint64 end_ts = 7;
+}
+
+// Metadata structure for DBN files/streams
+message Metadata {
+  uint32 version = 1;
+  string dataset = 2;
+  string schema = 3;
+  uint64 start = 4;
+  uint64 end = 5;
+  uint64 limit = 6;
+  string stype_in = 7;
+  string stype_out = 8;
+  bool ts_out = 9;
+  uint32 symbol_cstr_len = 10;
+  repeated string symbols = 11;
+  repeated string partial = 12;
+  repeated string not_found = 13;
+  repeated SymbolMapping mappings = 14;
+}
+
+message SymbolMapping {
+  string raw_symbol = 1;
+  repeated MappingInterval intervals = 2;
+}
+
+message MappingInterval {
+  string start_date = 1;
+  string end_date = 2;
+  string symbol = 3;
+}
+
+// Enumerations
+
+// RType - Record type identifiers
+// Note: In binary format, these match the hex values in comments
+enum RType {
+  RTYPE_MBP_0 = 0; // 0x00 Trades
+  RTYPE_MBP_1 = 1; // 0x01 MBP depth 1
+  RTYPE_MBP_10 = 10; // 0x0A MBP depth 10
+  RTYPE_STATUS = 18; // 0x12 Exchange status
+  RTYPE_INSTRUMENT_DEF = 19; // 0x13 Instrument definition
+  RTYPE_IMBALANCE = 20; // 0x14 Order imbalance
+  RTYPE_ERROR = 21; // 0x15 Error from gateway
+  RTYPE_SYMBOL_MAPPING = 22; // 0x16 Symbol mapping
+  RTYPE_SYSTEM = 23; // 0x17 System message/heartbeat
+  RTYPE_STATISTICS = 24; // 0x18 Statistics
+  RTYPE_OHLCV_1S = 32; // 0x20 OHLCV 1-second
+  RTYPE_OHLCV_1M = 33; // 0x21 OHLCV 1-minute
+  RTYPE_OHLCV_1H = 34; // 0x22 OHLCV 1-hour
+  RTYPE_OHLCV_1D = 35; // 0x23 OHLCV 1-day UTC
+  RTYPE_OHLCV_EOD = 36; // 0x24 OHLCV end-of-day
+  RTYPE_MBO = 160; // 0xA0 Market-by-order
+  RTYPE_CMBP_1 = 177; // 0xB1 Consolidated MBP depth 1
+  RTYPE_CBBO_1S = 192; // 0xC0 Consolidated BBO 1-second
+  RTYPE_CBBO_1M = 193; // 0xC1 Consolidated BBO 1-minute
+  RTYPE_TCBBO = 194; // 0xC2 Trade with CBBO
+  RTYPE_BBO_1S = 195; // 0xC3 BBO 1-second
+  RTYPE_BBO_1M = 196; // 0xC4 BBO 1-minute
+}
+
+// Schema - Data schema types
+enum Schema {
+  SCHEMA_MBO = 0; // Market-by-order
+  SCHEMA_MBP1 = 1; // MBP depth 1
+  SCHEMA_MBP10 = 2; // MBP depth 10
+  SCHEMA_TBBO = 3; // Trade with BBO
+  SCHEMA_TRADES = 4; // All trades
+  SCHEMA_OHLCV_1S = 5; // OHLCV 1-second
+  SCHEMA_OHLCV_1M = 6; // OHLCV 1-minute
+  SCHEMA_OHLCV_1H = 7; // OHLCV 1-hour
+  SCHEMA_OHLCV_1D = 8; // OHLCV 1-day UTC
+  SCHEMA_DEFINITION = 9; // Instrument definitions
+  SCHEMA_STATISTICS = 10; // Statistics
+  SCHEMA_STATUS = 11; // Trading status
+  SCHEMA_IMBALANCE = 12; // Auction imbalance
+  SCHEMA_OHLCV_EOD = 13; // OHLCV end-of-day
+  SCHEMA_CMBP1 = 14; // Consolidated MBP depth 1
+  SCHEMA_CBBO_1S = 15; // Consolidated BBO 1-second
+  SCHEMA_CBBO_1M = 16; // Consolidated BBO 1-minute
+  SCHEMA_TCBBO = 17; // Trade with consolidated BBO
+  SCHEMA_BBO_1S = 18; // BBO 1-second
+  SCHEMA_BBO_1M = 19; // BBO 1-minute
+}
+
+// Side - Market side
+enum Side {
+  SIDE_UNSPECIFIED = 0;
+  SIDE_ASK = 1; // Sell order/aggressor ('A')
+  SIDE_BID = 2; // Buy order/aggressor ('B')
+  SIDE_NONE = 3; // No side specified ('N')
+}
+
+// Action - Order event action
+enum Action {
+  ACTION_UNSPECIFIED = 0;
+  ACTION_MODIFY = 1; // Order modified ('M')
+  ACTION_TRADE = 2; // Trade executed ('T')
+  ACTION_FILL = 3; // Order filled ('F')
+  ACTION_CANCEL = 4; // Order cancelled ('C')
+  ACTION_ADD = 5; // New order added ('A')
+  ACTION_CLEAR = 6; // Clear book ('R')
+  ACTION_NONE = 7; // No action ('N')
+}
+
+// SType - Symbology type
+enum SType {
+  STYPE_INSTRUMENT_ID = 0; // Numeric ID
+  STYPE_RAW_SYMBOL = 1; // Original publisher symbols
+  STYPE_CONTINUOUS = 3; // Continuous contracts
+  STYPE_PARENT = 4; // Parent symbols (e.g., ES.FUT)
+  STYPE_NASDAQ_SYMBOL = 5; // NASDAQ suffixes
+  STYPE_CMS_SYMBOL = 6; // CMS suffixes
+  STYPE_ISIN = 7; // ISO 6166
+  STYPE_US_CODE = 8; // CUSIP codes
+  STYPE_BBG_COMP_ID = 9; // Bloomberg composite ID
+  STYPE_BBG_COMP_TICKER = 10; // Bloomberg composite ticker
+  STYPE_FIGI = 11; // Bloomberg FIGI
+  STYPE_FIGI_TICKER = 12; // Bloomberg FIGI ticker
+}
+
+// InstrumentClass
+enum InstrumentClass {
+  INSTRUMENT_CLASS_UNSPECIFIED = 0;
+  INSTRUMENT_CLASS_BOND = 1; // 'B'
+  INSTRUMENT_CLASS_CALL = 2; // 'C'
+  INSTRUMENT_CLASS_FUTURE = 3; // 'F'
+  INSTRUMENT_CLASS_STOCK = 4; // 'K'
+  INSTRUMENT_CLASS_MIXED_SPREAD = 5; // 'M'
+  INSTRUMENT_CLASS_PUT = 6; // 'P'
+  INSTRUMENT_CLASS_FUTURE_SPREAD = 7; // 'S'
+  INSTRUMENT_CLASS_OPTION_SPREAD = 8; // 'T'
+  INSTRUMENT_CLASS_FX_SPOT = 9; // 'X'
+  INSTRUMENT_CLASS_COMMODITY_SPOT = 10; // 'Y'
+}
