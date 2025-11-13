@@ -4,6 +4,42 @@
 .vscode/
 .helix/
 
-target/
+target
+
+# Build artifacts
+*.so
+*.dylib
+*.dll
+*.exe
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+*.swp
+*.swo
+*~
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+*.egg-info/
+dist/
+build/
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log/
 **/*.rs.bk
 *.sw[po]
+
+# Generated code (regenerate with buf generate)
+gen/
+
+# Generated JSON schemas (regenerate with buf generate)
+jsonschema/
+
