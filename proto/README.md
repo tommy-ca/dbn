@@ -122,7 +122,7 @@ buf generate
 ```
 
 This will generate:
-- JSON schemas → `docs/specs/jsonschema/`
+- JSON schemas → `gen/jsonschema/`
 - Go code → `gen/go/`
 - Python code → `gen/python/`
 - TypeScript code → `gen/ts/`

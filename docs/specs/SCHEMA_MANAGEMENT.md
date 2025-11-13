@@ -43,7 +43,7 @@ The DBN project uses a multi-format schema approach:
 
 1. **Rust structs** (`rust/dbn/src/record.rs`) - Primary source of truth for binary format
 2. **Protocol Buffers** (`docs/specs/proto/`) - Language-agnostic schema definitions
-3. **JSON Schemas** (`docs/specs/jsonschema/`) - Validation schemas for JSON format
+3. **JSON Schemas** (`gen/jsonschema/`) - Validation schemas for JSON format
 
 ## Directory Structure
 
@@ -56,10 +56,10 @@ dbn/
 │       ├── proto/              # Protobuf schema definitions
 │       │   ├── dbn.proto      # Main DBN v3 schema
 │       │   └── README.md
-│       ├── jsonschema/         # JSON schema definitions
-│       │   ├── *.schema.json
-│       │   └── README.md
 │       └── examples/           # Example messages
+├── gen/
+│   └── jsonschema/             # JSON schema definitions
+│       └── *.schema.json
 └── rust/
     └── dbn/
         └── src/
@@ -189,7 +189,7 @@ This will generate:
 - **Go code** → `gen/go/`
 - **Python code** → `gen/python/`
 - **TypeScript** → `gen/ts/`
-- **JSON schemas** → `docs/specs/jsonschema/`
+- **JSON schemas** → `gen/jsonschema/`
 
 Configuration in `buf.gen.yaml`:
 

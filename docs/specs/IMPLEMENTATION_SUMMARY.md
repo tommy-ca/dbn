@@ -25,10 +25,10 @@ dbn/
 │       ├── proto/
 │       │   ├── dbn.proto             # Main protobuf schema
 │       │   └── README.md             # Protobuf documentation
-│       ├── jsonschema/
-│       │   ├── *.schema.json         # JSON schemas
-│       │   └── README.md             # JSON Schema docs
 │       └── examples/                  # Sample messages (empty)
+├── gen/
+│   └── jsonschema/
+│       └── *.schema.json             # JSON schemas
 └── .gitignore                         # Updated with gen/ ignore
 ```
 
@@ -122,7 +122,7 @@ managed:
   enabled: true
 plugins:
   - remote: buf.build/community/timostamm-protobuf-ts
-    out: docs/specs/jsonschema
+    out: gen/jsonschema
   - remote: buf.build/bufbuild/buf-plugin-doc
     out: docs/specs
   - remote: buf.build/protocolbuffers/go
@@ -134,7 +134,7 @@ plugins:
 ```
 
 **Generates:**
-- JSON schemas → `docs/specs/jsonschema/`
+- JSON schemas → `gen/jsonschema/`
 - HTML documentation → `docs/specs/`
 - Go code → `gen/go/`
 - Python code → `gen/python/`
@@ -142,7 +142,7 @@ plugins:
 
 ### 4. JSON Schema
 
-**File:** `docs/specs/jsonschema/MboMsg.schema.json`
+**File:** `gen/jsonschema/MboMsg.schema.json`
 
 Example JSON Schema for `MboMsg` with:
 - JSON Schema Draft 2020-12 compliance
@@ -176,7 +176,7 @@ Example JSON Schema for `MboMsg` with:
 
 #### Format-Specific Docs
 - **`docs/specs/proto/README.md`** - Protobuf-specific documentation
-- **`docs/specs/jsonschema/README.md`** - JSON Schema usage guide
+- **JSON Schema usage guide** – See "JSON Schemas" in `docs/specs/README.md`
 
 ### 6. Updated .gitignore
 
@@ -272,7 +272,7 @@ buf generate
 - `gen/go/` - Go structs and code
 - `gen/python/` - Python classes
 - `gen/ts/` - TypeScript types
-- `docs/specs/jsonschema/` - JSON schemas
+- `gen/jsonschema/` - JSON schemas
 - `docs/specs/` - HTML documentation
 
 *Note: Code generation requires Buf authentication for remote plugins*
