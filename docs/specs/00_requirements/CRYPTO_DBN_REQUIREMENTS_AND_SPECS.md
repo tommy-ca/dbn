@@ -64,6 +64,27 @@ This document proposes a comprehensive adaptation of the Databento Binary Encodi
 ⚠️ **Trading halts**: Rare in crypto, exchanges may delist instead
 ⚠️ **Corporate actions**: Rare, but token swaps, airdrops, hard forks exist
 
+### External Feed Parity Targets
+
+To ensure DBN remains competitive with existing crypto data providers, every new schema must map cleanly to the normalized payloads emitted by **cryptofeed** (CF) and **Tardis.dev** (TD). The table below captures the high-level parity objectives that seed the remainder of this document.
+
+| Domain | DBN Schema (Proposed/Existing) | CF Equivalent | TD Equivalent | Status |
+|--------|--------------------------------|---------------|---------------|--------|
+| Spot/Perp Trades | `TradeMsg` (existing) | `trades` | `normalized_trades` | ✅ parity today |
+| Order Book | `MboMsg`, `Mbp1/10`, `Cbbo` | `l2_book`, `book_delta` | `l2_book`, `l2_book_snapshot` | ✅ parity today |
+| Funding Rates | `FundingRateMsg` (0xD0) | `funding` | `perpetuals_funding` | 🔴 missing |
+| Liquidations | `LiquidationMsg` (0xD1) | `liquidations` | `liquidations`, `liquidations_derivatives` | 🔴 missing |
+| Mark / Index Prices | `MarkPriceMsg` / `IndexPriceMsg` | `derivative_ticker` | `perpetuals_mark_price` | 🔴 missing |
+| Open Interest | `StatMsg` (needs crypto fields) | `open_interest` | `open_interest` | 🟡 partial (add perps) |
+| DEX Swaps | `DexSwapMsg` (0xD4) | `dex_trades` | `dex_swaps` | 🔴 missing |
+| DEX Pool State | `DexPoolStateMsg` (0xD5) | (none) | `dex_liquidity` | 🔴 missing |
+| Oracle Prices | `OraclePriceMsg` (0xD6) | `ticker` (Chainlink) | `oracle_prices` | 🔴 missing |
+| Cross-venue Spreads | `CrossRateMsg` (0xD8) | custom | `cross_rates` | 🟡 design |
+| Stablecoin Peg | `StablecoinPegMsg` (0xDA) | custom | `stablecoin_rates` | 🟡 design |
+| Gas & Block Data | `GasPriceMsg` (0xDB), `BlockInfoMsg` (0xDC) | `gas`, `block` | `gas_prices`, `blocks` | 🔴 missing |
+
+These gaps drive the prioritized requirements, canonical spec updates, and implementation steps that follow.
+
 ---
 
 ## Crypto Market Requirements
