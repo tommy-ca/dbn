@@ -5,131 +5,109 @@ This directory contains comprehensive schema specifications and documentation fo
 ## 🚀 Quick Start
 
 **New to DBN?** Follow this path:
-1. Start with [DBN_SCHEMA_SPECIFICATION.md](DBN_SCHEMA_SPECIFICATION.md) - Understand the base binary format
-2. For crypto data, read [CRYPTO_DBN_QUICK_REFERENCE.md](CRYPTO_DBN_QUICK_REFERENCE.md) - Get an overview
-3. Work with schemas: See [SCHEMA_MANAGEMENT.md](SCHEMA_MANAGEMENT.md) for setup and workflows
+1. Start with [DBN_SCHEMA_SPECIFICATION.md](01_canonical_spec/DBN_SCHEMA_SPECIFICATION.md) - Understand the base binary format
+2. For crypto data, read [CRYPTO_DBN_QUICK_REFERENCE.md](00_requirements/CRYPTO_DBN_QUICK_REFERENCE.md) - Get an overview
+3. Work with schemas: See [SCHEMA_MANAGEMENT.md](02_schema_implementation/SCHEMA_MANAGEMENT.md) for setup and workflows
 
-**Setting up development?** Jump to [SCHEMA_MANAGEMENT.md](SCHEMA_MANAGEMENT.md#prerequisites) for prerequisites and installation.
+**Setting up development?** Jump to [SCHEMA_MANAGEMENT.md](02_schema_implementation/SCHEMA_MANAGEMENT.md#prerequisites) for prerequisites and installation.
 
-**Looking for examples?** See [examples/README.md](examples/README.md) for sample data and code.
+**Looking for examples?** See [examples/README.md](03_generated_artifacts/examples/README.md) for sample data and code.
 
 ---
 
-## Contents
+## Specs-Driven Development Flow
 
-### 📚 Core Documentation
+1. **Capture requirements** – Document regulatory, market, and latency needs in [CRYPTO_DBN_REQUIREMENTS_AND_SPECS.md](00_requirements/CRYPTO_DBN_REQUIREMENTS_AND_SPECS.md) and summarize the business brief in [CRYPTO_DBN_QUICK_REFERENCE.md](00_requirements/CRYPTO_DBN_QUICK_REFERENCE.md).
+2. **Author the canonical DBN specification** – Maintain the binary contract in [DBN_SCHEMA_SPECIFICATION.md](01_canonical_spec/DBN_SCHEMA_SPECIFICATION.md).
+3. **Implement portable schemas** – Encode the canonical spec in protobuf (`proto/`) using the workflow in [SCHEMA_MANAGEMENT.md](02_schema_implementation/SCHEMA_MANAGEMENT.md).
+4. **Generate derived artifacts** – Produce JSON Schema, SDKs, and docs with `buf generate` (outputs in `gen/` and `03_generated_artifacts/generated/`).
+5. **Validate and distribute** – Use the examples suite plus downstream tests to ensure parity before publishing clients and documentation.
 
-This directory serves as the central hub for all DBN specification documentation:
+This flow keeps every artifact traceable to the source requirements while making it clear where changes should originate.
 
-#### Base DBN Specification
+## Contents by Phase
 
-- **[DBN_SCHEMA_SPECIFICATION.md](DBN_SCHEMA_SPECIFICATION.md)** - Complete binary format specification
-  - Record structure and sizes
-  - Field definitions and data types
-  - Enumerations and constants
-  - Version history and compatibility
-  - **Start here:** Foundation for understanding the DBN format
+### Phase 0 – Product Requirements & Strategy (`00_requirements/`)
 
-#### Cryptocurrency Extensions
+- **[CRYPTO_DBN_QUICK_REFERENCE.md](00_requirements/CRYPTO_DBN_QUICK_REFERENCE.md)** – Executive summary for stakeholders: high-level record taxonomy, storage footprint expectations, and cross-market constraints.
+- **[CRYPTO_DBN_REQUIREMENTS_AND_SPECS.md](00_requirements/CRYPTO_DBN_REQUIREMENTS_AND_SPECS.md)** – Detailed requirements, gap analyses, and acceptance criteria for new crypto datasets.
 
-- **[CRYPTO_DBN_QUICK_REFERENCE.md](CRYPTO_DBN_QUICK_REFERENCE.md)** - Quick reference guide for crypto-specific adaptations
-  - Executive summary of new crypto record types
-  - Schema design principles and symbology standards
-  - Lakehouse architecture and storage strategy
-  - Performance targets and cost estimation
-  - **Start here:** For a high-level overview of crypto extensions
+### Phase 1 – Canonical Specification (`01_canonical_spec/`)
 
-- **[CRYPTO_DBN_REQUIREMENTS_AND_SPECS.md](CRYPTO_DBN_REQUIREMENTS_AND_SPECS.md)** - Comprehensive crypto market requirements and specifications
-  - Detailed gap analysis (crypto vs traditional markets)
-  - New record type definitions (18 total)
-  - Enhanced metadata for cryptocurrencies
-  - Architecture recommendations
-  - Implementation roadmap
-  - **Recommended read:** After the quick reference, for detailed specifications
+- **[DBN_SCHEMA_SPECIFICATION.md](01_canonical_spec/DBN_SCHEMA_SPECIFICATION.md)** – Binary layout, enums, and version history. Every downstream artifact references the identifiers and constraints defined here.
 
-#### Implementation Guides
+### Phase 2 – Schema Implementation & Tooling (`02_schema_implementation/`)
 
-- **[SCHEMA_MANAGEMENT.md](SCHEMA_MANAGEMENT.md)** - Schema management and development guide
-  - Working with protobuf and buf CLI
-  - Schema versioning strategy
-  - Code generation workflow
-  - Best practices and contribution guidelines
+- **[SCHEMA_MANAGEMENT.md](02_schema_implementation/SCHEMA_MANAGEMENT.md)** – Environment setup, Buf workflows, and contributor expectations for evolving the schemas.
+- **[IMPLEMENTATION_SUMMARY.md](02_schema_implementation/IMPLEMENTATION_SUMMARY.md)** – Traceability matrix describing how the spec-driven flow is implemented in this repository.
+- **[HIERARCHICAL_SCHEMA_SUMMARY.md](02_schema_implementation/HIERARCHICAL_SCHEMA_SUMMARY.md)** – Documentation of the multi-file protobuf layout and rationale for each module.
+- **Protocol Buffers (`proto/`)** – Language-agnostic schema definitions representing the canonical spec in `.proto` form:
 
-### Schema Definitions
+  ```
+  proto/
+  └── databento/dbn/v3/
+      ├── common/           # RecordHeader, BidAskPair, etc.
+      ├── enums/            # RType, Schema, Side, Action ...
+      ├── messages/
+      │   ├── market_data/
+      │   ├── aggregated/
+      │   ├── reference/
+      │   └── system/
+      └── metadata/
+  ```
 
-#### Protocol Buffers (`proto/`)
+  **Features:**
+  - Modular files for the 15+ message types and enums
+  - Comprehensive enum coverage (RType, Schema, Side, Action, etc.)
+  - Fully managed with Buf (lint, breaking-change detection, formatting)
 
-Language-agnostic schema definitions for all DBN message types.
+  **Usage:**
+  ```bash
+  buf lint && buf format -w
+  buf breaking --against '.git#branch=main'
+  buf generate
+  ```
 
-```
-proto/
-├── dbn.proto              # Main DBN v3 schema
-└── README.md              # Protobuf documentation
-```
+### Phase 3 – Generated Schemas & SDKs (`03_generated_artifacts/`)
 
-**Features:**
-- Type-safe definitions for 15+ message types
-- Comprehensive enum definitions (RType, Schema, Side, Action, etc.)
-- Code generation for Go, Python, TypeScript, and more
-- Managed with Buf CLI for linting and compatibility
+- **JSON Schemas (`gen/jsonschema/`)** – Validation contracts derived from the protobuf definitions.
 
-**Usage:**
-```bash
-# Lint schemas
-buf lint
+  ```
+  gen/
+  └── jsonschema/
+      ├── *.schema.json         # Individual message schemas
+      └── MboMsg.schema.json   # Example: MBO message schema
+  ```
 
-# Format schemas
-buf format -w
+  **Features:** Draft 2020-12 compliance, snake_case + camelCase variants, and large integer safety. Use standard validators such as Ajv or `jsonschema`:
 
-# Generate code
-buf generate
+  ```javascript
+  const Ajv = require('ajv');
+  const schema = require('./MboMsg.schema.json');
+  const validate = new Ajv().compile(schema);
+  validate(data);
+  ```
 
-# Check for breaking changes
-buf breaking --against '.git#branch=main'
-```
+  ```python
+  import jsonschema
+  jsonschema.validate(instance=data, schema=schema)
+  ```
 
-#### JSON Schemas (`gen/jsonschema/`)
+- **Go/Python/TypeScript SDKs (`gen/go`, `gen/python`, `gen/ts`)** – Generated clients refreshed via `buf generate`.
+- **HTML and narrative docs (`03_generated_artifacts/generated/`)** – Optional Buf doc outputs for publishing schema references.
+- **Examples (`03_generated_artifacts/examples/`)** – Sample payloads, code walkthroughs, and future conformance fixtures.
 
-JSON Schema definitions for runtime validation and documentation.
+  ```
+  03_generated_artifacts/examples/
+  ├── mbo_sample.json       # Example MBO message
+  ├── trade_sample.json     # Example trade message
+  └── metadata_sample.json  # Example metadata
+  ```
 
-```
-gen/
-└── jsonschema/
-    ├── *.schema.json         # Individual message schemas
-    └── MboMsg.schema.json   # Example: MBO message schema
-```
+### Phase 4 – Validation & Release Readiness (`04_validation/`)
 
-**Features:**
-- JSON Schema Draft 2020-12 compliant
-- Runtime validation for JSON-formatted messages
-- IDE autocomplete and documentation
-- Large integer handling (uint64/int64 as strings)
-
-**Usage:**
-```javascript
-// JavaScript validation
-const Ajv = require('ajv');
-const schema = require('./MboMsg.schema.json');
-const validate = ajv.compile(schema);
-validate(data);
-```
-
-```python
-# Python validation
-import jsonschema
-jsonschema.validate(instance=data, schema=schema)
-```
-
-#### Examples (`examples/`)
-
-Sample messages and usage examples.
-
-```
-examples/
-├── mbo_sample.json       # Example MBO message
-├── trade_sample.json     # Example trade message
-└── metadata_sample.json  # Example metadata
-```
+- **[CLEAN_ENGINEERING_UPDATE.md](04_validation/CLEAN_ENGINEERING_UPDATE.md)** – Narrative QA + release notes tying protobuf updates back to binary guarantees.
+- **Checklists & future audits** – Add structured validation docs here as new release gates emerge.
 
 ## Message Types
 
@@ -299,10 +277,11 @@ buf breaking --against . # Check compatibility
 Alternative to Buf CLI for code generation:
 
 ```bash
-protoc --go_out=. \
+protoc --proto_path=proto \
+       --go_out=. \
        --python_out=. \
        --js_out=. \
-       docs/specs/proto/dbn.proto
+       proto/databento/dbn/v3/**/*.proto
 ```
 
 ### JSON Schema Validators

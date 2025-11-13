@@ -12,13 +12,13 @@ Successfully reorganized the DBN protobuf schemas from a single monolithic file 
 
 ### Before
 ```
-docs/specs/proto/
+proto/
 └── dbn.proto  (511 lines, 27 message/enum definitions)
 ```
 
 ### After
 ```
-docs/specs/proto/databento/dbn/v3/
+proto/databento/dbn/v3/
 ├── common/                      # 2 files
 │   ├── header.proto            # RecordHeader
 │   └── price_levels.proto      # BidAskPair, ConsolidatedBidAskPair

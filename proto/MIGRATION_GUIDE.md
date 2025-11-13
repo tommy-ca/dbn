@@ -9,14 +9,14 @@ The DBN protobuf schemas have been reorganized from a single file into a modular
 ### Before (Monolithic)
 
 ```
-docs/specs/proto/
+proto/
 └── dbn.proto  (511 lines, all schemas)
 ```
 
 ### After (Hierarchical)
 
 ```
-docs/specs/proto/databento/dbn/v3/
+proto/databento/dbn/v3/
 ├── common/           # 2 files - shared types
 ├── enums/            # 5 files - enumerations
 ├── messages/
@@ -343,15 +343,15 @@ import "databento/dbn/v3/common/header.proto": file does not exist
 ```
 
 **Solution:**
-Ensure your protoc or buf config points to `docs/specs/proto` as the import root:
+Ensure your protoc or buf config points to `proto` as the import root:
 
 ```bash
 # protoc
-protoc -I docs/specs/proto ...
+protoc -I proto ...
 
 # buf.yaml
 modules:
-  - path: docs/specs/proto
+  - path: proto
 ```
 
 ### Issue: Type not found in code
