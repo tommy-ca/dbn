@@ -31,4 +31,16 @@ enum RType {
   RTYPE_TCBBO = 194; // 0xC2 Trade with CBBO
   RTYPE_BBO_1S = 195; // 0xC3 BBO 1-second
   RTYPE_BBO_1M = 196; // 0xC4 BBO 1-minute
+
+  // Crypto extensions (reserved range 0xD0-0xE1)
+  RTYPE_FUNDING_RATE = 208; // 0xD0 Perpetual funding rates
+  RTYPE_LIQUIDATION = 209; // 0xD1 Liquidation events
+  RTYPE_MARK_PRICE = 210; // 0xD2 Mark price updates
+  RTYPE_INDEX_PRICE = 211; // 0xD3 Multi-venue spot index
+  RTYPE_DEX_SWAP = 212; // 0xD4 AMM swap executions
+  RTYPE_DEX_POOL_STATE = 213; // 0xD5 AMM pool state snapshots
+  RTYPE_ORACLE_PRICE = 214; // 0xD6 On-chain oracle prices
+  RTYPE_CROSS_RATE = 216; // 0xD8 Cross-exchange spreads
+  RTYPE_BASIS = 217; // 0xD9 Spot-futures basis
+  RTYPE_STABLECOIN_PEG = 218; // 0xDA Stablecoin peg monitoring
 }
