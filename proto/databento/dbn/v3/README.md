@@ -13,11 +13,13 @@ databento/dbn/v3/
 │   └── price_levels.proto # BidAskPair, ConsolidatedBidAskPair
 │
 ├── enums/                  # Enumeration definitions
+│   ├── action.proto       # Order event actions (Action)
+│   ├── instrument.proto   # Instrument classification (InstrumentClass)
+│   ├── market.proto       # Market-related enums (TriState, SecurityUpdateAction)
 │   ├── rtype.proto        # Record type identifiers (RType)
 │   ├── schema.proto       # Data schema types (Schema)
-│   ├── market.proto       # Side, Action enums
-│   ├── symbology.proto    # SType symbology types
-│   └── instrument.proto   # InstrumentClass enum
+│   ├── side.proto         # Market side (Side)
+│   └── symbology.proto    # Symbology types (SType)
 │
 ├── messages/               # Message type definitions
 │   ├── market_data/       # Real-time market data
@@ -62,21 +64,27 @@ Shared foundational types used across all message schemas.
 
 All enumeration types organized by domain.
 
+**action.proto** - Order Actions
+- `Action` - Add, Cancel, Modify, Trade, Fill, Clear, None
+
+**instrument.proto** - Instrument Classification
+- `InstrumentClass` - Bond, Call, Future, Stock, Put, Spreads, Spots, etc.
+
+**market.proto** - Market-Related Enums
+- `TriState` - Three-state boolean (Yes, No, Not Available)
+- `SecurityUpdateAction` - Instrument definition update action
+
 **rtype.proto** - Record Type Identifiers
 - `RType` - 22 record type values (0x00 to 0xC4)
 
 **schema.proto** - Data Schema Types
 - `Schema` - 20 schema type values for different data streams
 
-**market.proto** - Market-Related Enums
+**side.proto** - Market Side
 - `Side` - Ask, Bid, None
-- `Action` - Add, Cancel, Modify, Trade, Fill, Clear, None
 
 **symbology.proto** - Symbol Types
 - `SType` - 13 symbology type values (InstrumentId, RawSymbol, ISIN, etc.)
-
-**instrument.proto** - Instrument Classification
-- `InstrumentClass` - Bond, Call, Future, Stock, Put, Spreads, Spots, etc.
 
 ### Market Data Messages (`messages/market_data/`)
 
@@ -288,8 +296,9 @@ buf build
 
 ## References
 
-- [DBN Binary Specification](../../../docs/specs/DBN_SCHEMA_SPECIFICATION.md)
-- [Schema Management Guide](../../../docs/specs/SCHEMA_MANAGEMENT.md)
+- [DBN Binary Specification](../../../docs/specs/01_canonical_spec/DBN_SCHEMA_SPECIFICATION.md)
+- [Schema Management Guide](../../../docs/specs/02_schema_implementation/SCHEMA_MANAGEMENT.md)
+- [DBN Canonical vs Proto Mapping](../../../docs/specs/02_schema_implementation/DBN_PROTO_SCHEMA_MAPPING.md)
 - [Buf Documentation](https://buf.build/docs)
 - [Protocol Buffers Guide](https://protobuf.dev/)
 

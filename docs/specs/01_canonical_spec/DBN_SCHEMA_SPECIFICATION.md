@@ -653,6 +653,339 @@ pub struct WithTsOut<T: HasRType> {
 
 ---
 
+## Crypto Extensions (Reserved RTypes 0xD0‑0xE1)
+
+> **Status:** 🔵 Proposal / Design Phase  
+> The following record layouts are proposed extensions for crypto markets,
+> based on `00_requirements/CRYPTO_DBN_REQUIREMENTS_AND_SPECS.md`. They are
+> intended for DBN v4 / Crypto‑DBN and are not yet wired into the production
+> Rust implementation or protobuf schemas.
+
+### 19. FundingRateMsg
+
+**Size**: 80 bytes  
+**Alignment**: 8 bytes  
+**RType**: 0xD0 (FUNDING_RATE)
+
+```rust
+#[repr(C)]
+pub struct FundingRateMsg {
+    pub hd: RecordHeader,           // 16 bytes
+    pub ts_recv: u64,               // Capture timestamp
+
+    // Funding rate data (all fixed-point i64)
+    pub funding_rate: i64,          // Current funding rate (1e-9 scale = 0.0001% = 1e-7)
+    pub predicted_funding_rate: i64,// Next funding rate prediction
+    pub mark_price: i64,            // Fair price used for funding
+    pub index_price: i64,           // Spot index price
+    pub premium: i64,               // mark - index
+
+    // Timestamps
+    pub funding_interval_start: u64,// Start of current interval
+    pub funding_interval_end: u64,  // End of current interval (next payment)
+
+    // Metadata
+    pub interval_duration_ms: u32,  // Interval in milliseconds (typically 28800000 = 8h)
+    pub sequence: u32,              // Sequence number
+
+    pub _reserved: [u8; 16],        // Reserved for future use
+}
+```
+
+### 20. LiquidationMsg
+
+**Size**: 96 bytes  
+**Alignment**: 8 bytes  
+**RType**: 0xD1 (LIQUIDATION)
+
+```rust
+#[repr(C)]
+pub struct LiquidationMsg {
+    pub hd: RecordHeader,           // 16 bytes
+    pub ts_recv: u64,               // Capture timestamp
+
+    // Liquidation details
+    pub liquidation_price: i64,     // Price at liquidation (fixed-point)
+    pub quantity: i64,              // Quantity liquidated (can be negative)
+    pub bankrupt_price: i64,        // Bankruptcy price
+    pub mark_price: i64,            // Mark price at liquidation
+    pub unrealized_pnl: i64,        // Unrealized P&L at liquidation
+
+    // Account info
+    pub account_id: u64,            // Liquidated account (hashed)
+    pub liquidator_id: u64,         // Liquidator account (hashed)
+
+    // Liquidation metadata
+    pub side: c_char,               // Position side: B/S (Long/Short)
+    pub liquidation_type: u8,       // 0=partial, 1=full, 2=ADL
+    pub sequence: u32,              // Sequence number
+    pub position_value: i64,        // Total position value
+
+    pub _reserved: [u8; 10],        // Reserved
+}
+```
+
+### 21. MarkPriceMsg
+
+**Size**: 64 bytes  
+**Alignment**: 8 bytes  
+**RType**: 0xD2 (MARK_PRICE)
+
+```rust
+#[repr(C)]
+pub struct MarkPriceMsg {
+    pub hd: RecordHeader,           // 16 bytes
+    pub ts_recv: u64,               // Capture timestamp
+
+    pub mark_price: i64,            // Fair price (fixed-point)
+    pub index_price: i64,           // Underlying index
+    pub last_price: i64,            // Last trade price
+    pub premium: i64,               // mark - index
+
+    pub update_reason: u8,          // 1=periodic, 2=volatility, 3=funding
+    pub sequence: u32,              // Sequence number
+
+    pub _reserved: [u8; 11],        // Reserved
+}
+```
+
+### 22. IndexPriceMsg
+
+**Size**: 96 bytes  
+**Alignment**: 8 bytes  
+**RType**: 0xD3 (INDEX_PRICE)
+
+```rust
+#[repr(C)]
+pub struct IndexPriceMsg {
+    pub hd: RecordHeader,           // 16 bytes
+    pub ts_recv: u64,               // Capture timestamp
+
+    pub index_price: i64,           // Weighted spot price (fixed-point)
+
+    // Component prices (up to 5 exchanges)
+    pub component_prices: [i64; 5], // Individual exchange prices
+    pub component_weights: [i32; 5],// Weights (1e-6 scale, sum to 1e6)
+    pub num_components: u8,         // Number of active components
+
+    pub sequence: u32,              // Sequence number
+
+    pub _reserved: [u8; 11],        // Reserved
+}
+```
+
+### 23. DexSwapMsg
+
+**Size**: 128 bytes  
+**Alignment**: 8 bytes  
+**RType**: 0xD4 (DEX_SWAP)
+
+```rust
+#[repr(C)]
+pub struct DexSwapMsg {
+    pub hd: RecordHeader,           // 16 bytes
+    pub ts_recv: u64,               // Capture timestamp (off-chain)
+
+    // On-chain metadata
+    pub block_number: u64,          // Block number
+    pub block_timestamp: u64,       // Block timestamp
+    pub tx_hash: [u8; 32],          // Transaction hash
+    pub log_index: u32,             // Event index in transaction
+
+    // Swap details
+    pub amount_in: i64,             // Input amount (token0)
+    pub amount_out: i64,            // Output amount (token1)
+    pub fee: i64,                   // Fee paid
+    pub price_before: i64,          // Pool price before swap
+    pub price_after: i64,           // Pool price after swap
+
+    // Pool info
+    pub pool_address: [u8; 20],     // Pool contract address (Ethereum)
+    pub router_address: [u8; 20],   // Router contract used
+
+    // Sender/recipient (hashed for privacy)
+    pub sender_hash: u64,           // Hashed sender address
+    pub recipient_hash: u64,        // Hashed recipient address
+
+    pub gas_used: u32,              // Gas consumed
+    pub gas_price: u32,             // Gas price in Gwei
+
+    pub _reserved: [u8; 8],         // Reserved
+}
+```
+
+### 24. DexPoolStateMsg
+
+**Size**: 144 bytes  
+**Alignment**: 8 bytes  
+**RType**: 0xD5 (DEX_POOL_STATE)
+
+```rust
+#[repr(C)]
+pub struct DexPoolStateMsg {
+    pub hd: RecordHeader,           // 16 bytes
+    pub ts_recv: u64,               // Capture timestamp
+
+    // On-chain metadata
+    pub block_number: u64,          // Block number
+    pub block_timestamp: u64,       // Block timestamp
+
+    // Pool state (AMM)
+    pub reserve0: i64,              // Token0 reserves
+    pub reserve1: i64,              // Token1 reserves
+    pub k_value: i64,               // Constant product (reserve0 * reserve1)
+    pub sqrt_price_x96: i64,        // UniV3 price (Q64.96 format)
+    pub liquidity: i64,             // Total liquidity
+    pub tick: i32,                  // Current tick (UniV3)
+
+    // Pool metadata
+    pub pool_address: [u8; 20],     // Pool contract address
+    pub pool_type: u8,              // 1=UniV2, 2=UniV3, 3=Curve, etc.
+    pub fee_tier: u32,              // Fee in basis points (30 = 0.30%)
+
+    // Volume stats (optional, if available)
+    pub volume_24h_token0: i64,     // 24h volume in token0
+    pub volume_24h_token1: i64,     // 24h volume in token1
+    pub fee_24h: i64,               // 24h fees collected
+
+    // TVL
+    pub tvl_usd: i64,               // Total Value Locked in USD
+
+    pub sequence: u32,              // Sequence number
+    pub _reserved: [u8; 12],        // Reserved
+}
+```
+
+### 25. OraclePriceMsg
+
+**Size**: 80 bytes  
+**Alignment**: 8 bytes  
+**RType**: 0xD6 (ORACLE_PRICE)
+
+```rust
+#[repr(C)]
+pub struct OraclePriceMsg {
+    pub hd: RecordHeader,           // 16 bytes
+    pub ts_recv: u64,               // Capture timestamp
+
+    // On-chain metadata
+    pub block_number: u64,          // Block number
+    pub block_timestamp: u64,       // Block timestamp
+
+    // Oracle data
+    pub price: i64,                 // Oracle price (fixed-point)
+    pub confidence_interval: i64,   // CI width (±)
+    pub num_sources: u8,            // Number of data sources
+    pub oracle_type: u8,            // 1=Chainlink, 2=Pyth, 3=Band, etc.
+
+    // Oracle metadata
+    pub oracle_address: [u8; 20],   // Oracle contract address
+    pub round_id: u64,              // Round/update ID
+
+    pub sequence: u32,              // Sequence number
+    pub _reserved: [u8; 10],        // Reserved
+}
+```
+
+### 26. CrossRateMsg
+
+**Size**: 80 bytes  
+**Alignment**: 8 bytes  
+**RType**: 0xD8 (CROSS_RATE)
+
+```rust
+#[repr(C)]
+pub struct CrossRateMsg {
+    pub hd: RecordHeader,           // 16 bytes (instrument_id = normalized pair ID)
+    pub ts_recv: u64,               // Capture timestamp
+
+    // Exchange rates
+    pub exchange1_price: i64,       // Price on exchange 1
+    pub exchange2_price: i64,       // Price on exchange 2
+    pub spread_bps: i32,            // Spread in basis points
+    pub spread_pct: i64,            // Spread percentage (fixed-point)
+
+    // Exchange identifiers
+    pub exchange1_id: u16,          // Publisher ID of exchange 1
+    pub exchange2_id: u16,          // Publisher ID of exchange 2
+
+    // Arbitrage metrics
+    pub arb_opportunity: i64,       // Profit potential (fixed-point)
+    pub transfer_cost: i64,         // Est. transfer/fees cost
+    pub net_profit: i64,            // Net arbitrage profit
+
+    pub sequence: u32,              // Sequence number
+    pub _reserved: [u8; 12],        // Reserved
+}
+```
+
+### 27. BasisMsg
+
+**Size**: 72 bytes  
+**Alignment**: 8 bytes  
+**RType**: 0xD9 (BASIS)
+
+```rust
+#[repr(C)]
+pub struct BasisMsg {
+    pub hd: RecordHeader,           // 16 bytes
+    pub ts_recv: u64,               // Capture timestamp
+
+    // Basis spread data
+    pub spot_price: i64,            // Spot market price
+    pub futures_price: i64,         // Futures/perpetual price
+    pub basis: i64,                 // futures - spot (fixed-point)
+    pub basis_pct: i64,             // Basis as percentage
+    pub annualized_basis: i64,      // Annualized basis (for dated futures)
+
+    // Instrument IDs
+    pub spot_instrument_id: u32,    // Spot instrument ID
+    pub futures_instrument_id: u32, // Futures instrument ID
+
+    pub sequence: u32,              // Sequence number
+    pub _reserved: [u8; 4],         // Reserved
+}
+```
+
+### 28. StablecoinPegMsg
+
+**Size**: 72 bytes  
+**Alignment**: 8 bytes  
+**RType**: 0xDA (STABLECOIN_PEG)
+
+```rust
+#[repr(C)]
+pub struct StablecoinPegMsg {
+    pub hd: RecordHeader,           // 16 bytes (instrument_id = stablecoin ID)
+    pub ts_recv: u64,               // Capture timestamp
+
+    // Peg status
+    pub price_usd: i64,             // Current USD price (fixed-point)
+    pub deviation_bps: i32,         // Deviation from $1.00 in bps
+    pub deviation_pct: i64,         // Deviation percentage
+
+    // Supply metrics
+    pub total_supply: i64,          // Total supply
+    pub market_cap: i64,            // Market cap in USD
+
+    // Exchange data
+    pub exchange_id: u16,           // Source exchange
+    pub volume_24h: i64,            // 24h volume
+
+    // Peg confidence
+    pub peg_confidence: u8,         // 0-100 confidence score
+    pub alert_level: u8,            // 0=normal, 1=warning, 2=critical
+
+    pub sequence: u32,              // Sequence number
+    pub _reserved: [u8; 10],        // Reserved
+}
+```
+
+The remaining reserved RTypes (0xDB‑0xE1) have high-level summaries in the
+requirements document but do not yet have finalized binary layouts here.
+
+---
+
 ## Enumerations
 
 ### Side (Market Side)

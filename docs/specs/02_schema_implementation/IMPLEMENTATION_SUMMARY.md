@@ -73,12 +73,18 @@ Comprehensive protobuf definitions for all 15 DBN message types split across mod
 - `MappingInterval` - Time-bound mappings
 
 #### Enumerations
-- `RType` - Record type identifiers (21 values)
+- `RType` - Record type identifiers (22 values)
 - `Schema` - Data schema types (20 values)
-- `Side` - Market side (3 values)
-- `Action` - Order actions (7 values)
+- `Side` - Market side (4 values)
+- `Action` - Order actions (8 values)
 - `SType` - Symbology types (12 values)
-- `InstrumentClass` - Instrument classes (10 values)
+- `InstrumentClass` - Instrument classes (11 values)
+- `MatchAlgorithm` - Matching algorithm codes (10 values)
+
+For detailed mapping between the canonical DBN structs and these protobuf
+definitions, including the reserved crypto RTypes 0xD0‑0xE1, refer to
+`DBN_PROTO_SCHEMA_MAPPING.md`. For the proposed `messages/crypto/` layout and
+crypto message shapes, see `CRYPTO_PROTO_LAYOUT_PROPOSAL.md`.
 
 **Features:**
 - Binary-compatible with Rust `#[repr(C)]` structs

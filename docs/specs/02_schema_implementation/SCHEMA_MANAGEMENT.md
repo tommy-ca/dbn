@@ -63,6 +63,56 @@ Each pull request should link work back to a phase to keep provenance clear. For
 - **Shared crypto primitives** – Introduce reusable proto messages for hashes (32 bytes), addresses (20 bytes), and block metadata so DexSwap/Liquidation/GasPrice messages do not duplicate field definitions.
 - **Parity verification** – For every new schema, document which cryptofeed/tardis payload it replaces in `docs/specs/02_schema_implementation/IMPLEMENTATION_SUMMARY.md`.
 
+For a cross-reference between the canonical DBN spec and the hierarchical
+protobuf layout (including the current status of the crypto RTypes 0xD0‑0xE1),
+see `DBN_PROTO_SCHEMA_MAPPING.md`.
+
+For a proposed layout and draft message shapes for the `messages/crypto/`
+package (including FundingRateMsg, LiquidationMsg, DexSwapMsg, and related
+records), see `CRYPTO_PROTO_LAYOUT_PROPOSAL.md`. Treat that document as the
+design reference when promoting the crypto structs from the requirements docs
+into concrete `.proto` definitions.
+
+#### Suggested Implementation Order (Crypto Schemas)
+
+To keep the crypto workstream manageable and aligned with the requirements
+priority tables, implement schemas roughly in this order:
+
+1. **P0 Derivatives (market data critical)**
+   - `FundingRateMsg` (0xD0) – Perpetual funding rates
+   - `LiquidationMsg` (0xD1) – Liquidation events
+   - `MarkPriceMsg` (0xD2) – Perp mark price
+   - `IndexPriceMsg` (0xD3) – Spot index price
+
+2. **P0–P1 DEX / DeFi**
+   - `DexSwapMsg` (0xD4) – AMM swaps
+   - `DexPoolStateMsg` (0xD5) – Pool state snapshots
+   - `OraclePriceMsg` (0xD6) – Oracle price feeds
+
+3. **P1 Cross-Market Analytics**
+   - `CrossRateMsg` (0xD8) – Cross-venue spreads
+   - `BasisMsg` (0xD9) – Spot–futures basis
+   - `StablecoinPegMsg` (0xDA) – Stablecoin peg monitoring
+
+4. **P2 Infrastructure / On-Chain Telemetry**
+   - `GasPriceMsg` (0xDB)
+   - `BlockInfoMsg` (0xDC)
+   - `SmartContractEventMsg` (0xDD)
+   - `InsuranceFundMsg` (0xDE)
+   - `ClawbackMsg` (0xDF)
+   - `DelistingMsg` (0xE0)
+   - `TokenMigrationMsg` (0xE1)
+
+Each group should go through the full specs-driven flow:
+
+1. Validate binary struct definitions and sizes in the requirements doc.
+2. Update the canonical spec (`01_canonical_spec/`) once layouts are stable.
+3. Implement matching Rust `#[repr(C)]` structs.
+4. Add protobuf messages under `messages/crypto/` per
+   `CRYPTO_PROTO_LAYOUT_PROPOSAL.md`.
+5. Extend enums (`RType`, `Schema`, crypto-specific enums) append-only.
+6. Regenerate artifacts and add validation fixtures.
+
 ## Directory Structure
 
 ```

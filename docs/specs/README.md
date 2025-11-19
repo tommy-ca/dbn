@@ -41,6 +41,7 @@ This flow keeps every artifact traceable to the source requirements while making
 - **[SCHEMA_MANAGEMENT.md](02_schema_implementation/SCHEMA_MANAGEMENT.md)** – Environment setup, Buf workflows, and contributor expectations for evolving the schemas.
 - **[IMPLEMENTATION_SUMMARY.md](02_schema_implementation/IMPLEMENTATION_SUMMARY.md)** – Traceability matrix describing how the spec-driven flow is implemented in this repository.
 - **[HIERARCHICAL_SCHEMA_SUMMARY.md](02_schema_implementation/HIERARCHICAL_SCHEMA_SUMMARY.md)** – Documentation of the multi-file protobuf layout and rationale for each module.
+- **[DBN_PROTO_SCHEMA_MAPPING.md](02_schema_implementation/DBN_PROTO_SCHEMA_MAPPING.md)** – Mapping between the canonical DBN spec and the hierarchical protobuf schemas, including the status of crypto extensions (RTypes 0xD0–0xE1).
 - **Protocol Buffers (`proto/`)** – Language-agnostic schema definitions representing the canonical spec in `.proto` form:
 
   ```

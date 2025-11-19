@@ -474,10 +474,30 @@ The hierarchical reorganization of DBN protobuf schemas provides:
 
 The new structure is production-ready and maintains 100% binary compatibility with existing DBN v3 implementations.
 
+## Crypto Extensions Status
+
+The hierarchical schemas in `proto/databento/dbn/v3/` intentionally cover the
+**core DBNv3 record types only** (RTypes 0x00–0xC4). The crypto-focused
+extensions reserved in the canonical spec (RTypes 0xD0–0xE1, e.g.
+`FundingRateMsg`, `LiquidationMsg`, `DexSwapMsg`) are currently:
+
+- Defined at the requirements / design level in:  
+  - `00_requirements/CRYPTO_DBN_REQUIREMENTS_AND_SPECS.md`  
+  - `00_requirements/CRYPTO_DBN_QUICK_REFERENCE.md`
+- Reserved as RType values in
+  `01_canonical_spec/DBN_SCHEMA_SPECIFICATION.md` but **not yet implemented**
+  as binary structs or protobuf messages.
+- Tracked as backlog items in
+  `02_schema_implementation/SCHEMA_MANAGEMENT.md` (see *Crypto Schema Backlog*).
+
+For a detailed mapping between the canonical DBN spec and the hierarchical
+protos, including crypto extension status, see:
+`02_schema_implementation/DBN_PROTO_SCHEMA_MAPPING.md`.
+
 ---
 
-**Completed:** 2025-10-18
-**Total Time:** ~1 hour
-**Files Created:** 25
-**Lines of Code:** ~1,100
+**Completed:** 2025-10-18  
+**Total Time:** ~1 hour  
+**Files Created:** 25  
+**Lines of Code:** ~1,100  
 **Validation:** ✅ All tests passing
