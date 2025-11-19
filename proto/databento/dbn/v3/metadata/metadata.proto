@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+package databento.dbn.v3.metadata;
+
+option go_package = "github.com/databento/dbn/gen/go/databento/dbn/v3/metadata";
+option java_multiple_files = true;
+option java_package = "com.databento.dbn.v3.metadata";
+
+// Metadata structure for DBN files/streams
+message Metadata {
+  // DBN schema version (u16 in binary, packed as u32)
+  uint32 version = 1;
+
+  // Dataset code (max 16 chars, c_char array in binary)
+  string dataset = 2;
+
+  // Data schema or empty for mixed (c_char array in binary)
+  string schema = 3;
+
+  // UNIX nano timestamp of query start (u64, fixed-width)
+  fixed64 start = 4;
+
+  // UNIX nano timestamp of query end (u64, fixed-width, optional)
+  fixed64 end = 5;
+
+  // Max number of records (u64, fixed-width, optional)
+  fixed64 limit = 6;
+
+  // Input symbology type (c_char array in binary, optional)
+  string stype_in = 7;
+
+  // Output symbology type (c_char array in binary)
+  string stype_out = 8;
+
+  // Has live gateway send timestamps (bool in binary)
+  bool ts_out = 9;
+
+  // Fixed symbol string length (u32, fixed-width)
+  fixed32 symbol_cstr_len = 10;
+
+  // Query input symbols (repeated c_char arrays)
+  repeated string symbols = 11;
+
+  // Partially resolved symbols (repeated c_char arrays)
+  repeated string partial = 12;
+
+  // Unresolved symbols (repeated c_char arrays)
+  repeated string not_found = 13;
+
+  // Symbol mappings with intervals
+  repeated SymbolMapping mappings = 14;
+}
+
+// SymbolMapping represents a symbol resolution with time intervals
+message SymbolMapping {
+  // Input symbol (stype_in)
+  string raw_symbol = 1;
+  // Mapping intervals over time
+  repeated MappingInterval intervals = 2;
+}
+
+// MappingInterval represents a time-bound symbol mapping
+message MappingInterval {
+  // UTC start date (inclusive), ISO 8601 format
+  string start_date = 1;
+  // UTC end date (exclusive), ISO 8601 format
+  string end_date = 2;
+  // Resolved symbol (stype_out)
+  string symbol = 3;
+}

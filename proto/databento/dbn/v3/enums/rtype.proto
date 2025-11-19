@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package databento.dbn.v3.enums;
+
+option go_package = "github.com/databento/dbn/gen/go/databento/dbn/v3/enums";
+option java_multiple_files = true;
+option java_package = "com.databento.dbn.v3.enums";
+
+// RType - Record type identifiers
+// Note: In binary format, these match the hex values in comments
+enum RType {
+  RTYPE_MBP_0 = 0; // 0x00 Trades
+  RTYPE_MBP_1 = 1; // 0x01 MBP depth 1
+  RTYPE_MBP_10 = 10; // 0x0A MBP depth 10
+  RTYPE_STATUS = 18; // 0x12 Exchange status
+  RTYPE_INSTRUMENT_DEF = 19; // 0x13 Instrument definition
+  RTYPE_IMBALANCE = 20; // 0x14 Order imbalance
+  RTYPE_ERROR = 21; // 0x15 Error from gateway
+  RTYPE_SYMBOL_MAPPING = 22; // 0x16 Symbol mapping
+  RTYPE_SYSTEM = 23; // 0x17 System message/heartbeat
+  RTYPE_STATISTICS = 24; // 0x18 Statistics
+  RTYPE_OHLCV_1S = 32; // 0x20 OHLCV 1-second
+  RTYPE_OHLCV_1M = 33; // 0x21 OHLCV 1-minute
+  RTYPE_OHLCV_1H = 34; // 0x22 OHLCV 1-hour
+  RTYPE_OHLCV_1D = 35; // 0x23 OHLCV 1-day UTC
+  RTYPE_OHLCV_EOD = 36; // 0x24 OHLCV end-of-day
+  RTYPE_MBO = 160; // 0xA0 Market-by-order
+  RTYPE_CMBP_1 = 177; // 0xB1 Consolidated MBP depth 1
+  RTYPE_CBBO_1S = 192; // 0xC0 Consolidated BBO 1-second
+  RTYPE_CBBO_1M = 193; // 0xC1 Consolidated BBO 1-minute
+  RTYPE_TCBBO = 194; // 0xC2 Trade with CBBO
+  RTYPE_BBO_1S = 195; // 0xC3 BBO 1-second
+  RTYPE_BBO_1M = 196; // 0xC4 BBO 1-minute
+
+  // Crypto extensions (reserved range 0xD0-0xE1)
+  RTYPE_FUNDING_RATE = 208; // 0xD0 Perpetual funding rates
+  RTYPE_LIQUIDATION = 209; // 0xD1 Liquidation events
+  RTYPE_MARK_PRICE = 210; // 0xD2 Mark price updates
+  RTYPE_INDEX_PRICE = 211; // 0xD3 Multi-venue spot index
+  RTYPE_DEX_SWAP = 212; // 0xD4 AMM swap executions
+  RTYPE_DEX_POOL_STATE = 213; // 0xD5 AMM pool state snapshots
+  RTYPE_ORACLE_PRICE = 214; // 0xD6 On-chain oracle prices
+  RTYPE_CROSS_RATE = 216; // 0xD8 Cross-exchange spreads
+  RTYPE_BASIS = 217; // 0xD9 Spot-futures basis
+  RTYPE_STABLECOIN_PEG = 218; // 0xDA Stablecoin peg monitoring
+}
