@@ -9,49 +9,48 @@ package databento.dbn.v3;
 
 // The record type.
 enum RType {
-  option allow_alias = true;
   // The first value must be zero in proto3.
   RTYPE_UNSPECIFIED = 0; // Default or unspecified record type
-  MBP_0 = 0x00; // Market-by-price depth 0 (used for Trades schema)
-  MBP_1 = 0x01; // Market-by-price depth 1 (used for Mbp1 and Tbbo schemas)
-  MBP_10 = 0x0A; // Market-by-price depth 10 (used for Mbp10 schema)
-  OHLCV_1S = 0x20; // OHLCV 1-second
-  OHLCV_1M = 0x21; // OHLCV 1-minute
-  OHLCV_1H = 0x22; // OHLCV 1-hour
-  OHLCV_1D = 0x23; // OHLCV 1-day UTC
-  OHLCV_EOD = 0x24; // OHLCV end-of-day
-  STATUS = 0x12; // Exchange status
-  INSTRUMENT_DEF = 0x13; // Instrument definition
-  IMBALANCE = 0x14; // Order imbalance
-  ERROR = 0x15; // Error from gateway
-  SYMBOL_MAPPING = 0x16; // Symbol mapping
-  SYSTEM = 0x17; // System message/heartbeat
-  STATISTICS = 0x18; // Statistics
-  MBO = 0xA0; // Market-by-order
-  CMBP_1 = 0xB1; // Consolidated MBP depth 1
-  CBBO_1S = 0xC0; // Consolidated BBO 1-second
-  CBBO_1M = 0xC1; // Consolidated BBO 1-minute
-  TCBBO = 0xC2; // Trade with CBBO
-  BBO_1S = 0xC3; // BBO 1-second
-  BBO_1M = 0xC4; // BBO 1-minute
+  MBP_0 = 1; // Market-by-price depth 0 (used for Trades schema) (was 0x00)
+  MBP_1 = 2; // Market-by-price depth 1 (used for Mbp1 and Tbbo schemas) (was 0x01)
+  MBP_10 = 3; // Market-by-price depth 10 (used for Mbp10 schema) (was 0x0A)
+  OHLCV_1S = 4; // OHLCV 1-second (was 0x20)
+  OHLCV_1M = 5; // OHLCV 1-minute (was 0x21)
+  OHLCV_1H = 6; // OHLCV 1-hour (was 0x22)
+  OHLCV_1D = 7; // OHLCV 1-day UTC (was 0x23)
+  OHLCV_EOD = 8; // OHLCV end-of-day (was 0x24)
+  STATUS = 9; // Exchange status (was 0x12)
+  INSTRUMENT_DEF = 10; // Instrument definition (was 0x13)
+  IMBALANCE = 11; // Order imbalance (was 0x14)
+  ERROR = 12; // Error from gateway (was 0x15)
+  SYMBOL_MAPPING = 13; // Symbol mapping (was 0x16)
+  SYSTEM = 14; // System message/heartbeat (was 0x17)
+  STATISTICS = 15; // Statistics (was 0x18)
+  MBO = 16; // Market-by-order (was 0xA0)
+  CMBP_1 = 17; // Consolidated MBP depth 1 (was 0xB1)
+  CBBO_1S = 18; // Consolidated BBO 1-second (was 0xC0)
+  CBBO_1M = 19; // Consolidated BBO 1-minute (was 0xC1)
+  TCBBO = 20; // Trade with CBBO (was 0xC2)
+  BBO_1S = 21; // BBO 1-second (was 0xC3)
+  BBO_1M = 22; // BBO 1-minute (was 0xC4)
   // Reserved crypto extensions
-  FUNDING_RATE = 0xD0;
-  LIQUIDATION = 0xD1;
-  MARK_PRICE = 0xD2;
-  INDEX_PRICE = 0xD3;
-  DEX_SWAP = 0xD4;
-  DEX_POOL_STATE = 0xD5;
-  ORACLE_PRICE = 0xD6;
-  CROSS_RATE = 0xD8;
-  BASIS = 0xD9;
-  STABLECOIN_PEG = 0xDA;
-  GAS_PRICE = 0xDB;
-  BLOCK_INFO = 0xDC;
-  SMART_CONTRACT_EVENT = 0xDD;
-  INSURANCE_FUND = 0xDE;
-  CLAWBACK = 0xDF;
-  DELISTING = 0xE0;
-  TOKEN_MIGRATION = 0xE1;
+  FUNDING_RATE = 23; // was 0xD0
+  LIQUIDATION = 24; // was 0xD1
+  MARK_PRICE = 25; // was 0xD2
+  INDEX_PRICE = 26; // was 0xD3
+  DEX_SWAP = 27; // was 0xD4
+  DEX_POOL_STATE = 28; // was 0xD5
+  ORACLE_PRICE = 29; // was 0xD6
+  CROSS_RATE = 30; // was 0xD8
+  BASIS = 31; // was 0xD9
+  STABLECOIN_PEG = 32; // was 0xDA
+  GAS_PRICE = 33; // was 0xDB
+  BLOCK_INFO = 34; // was 0xDC
+  SMART_CONTRACT_EVENT = 35; // was 0xDD
+  INSURANCE_FUND = 36; // was 0xDE
+  CLAWBACK = 37; // was 0xDF
+  DELISTING = 38; // was 0xE0
+  TOKEN_MIGRATION = 39; // was 0xE1
 }
 
 // The side of the market.
