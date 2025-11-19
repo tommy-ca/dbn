@@ -13,6 +13,7 @@ lint:
     - COMMENT_ENUM
     - COMMENT_ENUM_VALUE
     - COMMENT_MESSAGE
+    - ENUM_VALUE_PREFIX
   ignore:
     - proto/vendor
 breaking:
