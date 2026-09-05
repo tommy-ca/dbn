@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+package databento.dbn.v3.messages.crypto;
+
+import "databento/dbn/v3/common/header.proto";
+
+option go_package = "github.com/databento/dbn/gen/go/databento/dbn/v3/messages/crypto";
+option java_multiple_files = true;
+option java_package = "com.databento.dbn.v3.messages.crypto";
+
+// CrossRateMsg represents a cross-exchange spread record.
+// Binary layout: 80 bytes, 8-byte aligned
+// RType: 0xD8 (216)
+message CrossRateMsg {
+  databento.dbn.v3.common.RecordHeader hd = 1;
+  fixed64 ts_recv = 2;
+
+  // Exchange prices and spread metrics (fixed-point, scale 1e-9)
+  sfixed64 exchange1_price = 3;
+  sfixed64 exchange2_price = 4;
+  sfixed32 spread_bps = 5;
+  sfixed64 spread_pct = 6;
+
+  // Exchange identifiers
+  fixed32 exchange1_id = 7;
+  fixed32 exchange2_id = 8;
+
+  // Arbitrage metrics
+  sfixed64 arb_opportunity = 9;
+  sfixed64 transfer_cost = 10;
+  sfixed64 net_profit = 11;
+
+  // Message sequence number (u32, fixed-width)
+  fixed32 sequence = 12;
+}
+
+// StablecoinPegMsg represents a stablecoin peg monitoring record.
+// Binary layout: 72 bytes, 8-byte aligned
+// RType: 0xDA (218)
+message StablecoinPegMsg {
+  databento.dbn.v3.common.RecordHeader hd = 1;
+  fixed64 ts_recv = 2;
+
+  // Peg status (fixed-point, scale 1e-9)
+  sfixed64 price_usd = 3;
+  sfixed32 deviation_bps = 4;
+  sfixed64 deviation_pct = 5;
+
+  // Supply and market metrics
+  sfixed64 total_supply = 6;
+  sfixed64 market_cap = 7;
+
+  // Exchange volume
+  fixed32 exchange_id = 8;
+  sfixed64 volume_24h = 9;
+
+  // Peg confidence and alerting
+  uint32 peg_confidence = 10; // 0-100
+  uint32 alert_level = 11; // 0=normal, 1=warning, 2=critical
+
+  // Message sequence number (u32, fixed-width)
+  fixed32 sequence = 12;
+}

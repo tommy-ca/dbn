@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package databento.dbn.v3.enums;
+
+option go_package = "github.com/databento/dbn/gen/go/databento/dbn/v3/enums";
+option java_multiple_files = true;
+option java_package = "com.databento.dbn.v3.enums";
+
+// Side represents market side
+// Binary representation: single ASCII character (c_char)
+enum Side {
+  SIDE_INVALID = 0; // Invalid/unset
+  SIDE_ASK = 65; // 'A' - Ask/Sell order or aggressor
+  SIDE_BID = 66; // 'B' - Bid/Buy order or aggressor
+  SIDE_NONE = 78; // 'N' - No side specified
+}

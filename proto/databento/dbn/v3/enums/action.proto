@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package databento.dbn.v3.enums;
+
+option go_package = "github.com/databento/dbn/gen/go/databento/dbn/v3/enums";
+option java_multiple_files = true;
+option java_package = "com.databento.dbn.v3.enums";
+
+// Action represents order event actions
+// Binary representation: single ASCII character (c_char)
+enum Action {
+  ACTION_INVALID = 0; // Invalid/unset
+  ACTION_MODIFY = 77; // 'M' - Order modified
+  ACTION_TRADE = 84; // 'T' - Trade executed
+  ACTION_FILL = 70; // 'F' - Order filled
+  ACTION_CANCEL = 67; // 'C' - Order cancelled
+  ACTION_ADD = 65; // 'A' - New order added
+  ACTION_CLEAR = 82; // 'R' - Clear book (Reset)
+  ACTION_NONE = 78; // 'N' - No action
+}

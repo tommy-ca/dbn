@@ -1,0 +1,110 @@
+syntax = "proto3";
+
+package databento.dbn.v3.messages.reference;
+
+import "databento/dbn/v3/common/header.proto";
+import "databento/dbn/v3/enums/instrument.proto";
+import "databento/dbn/v3/enums/market.proto";
+import "databento/dbn/v3/enums/side.proto";
+
+option go_package = "github.com/databento/dbn/gen/go/databento/dbn/v3/messages/reference";
+option java_multiple_files = true;
+option java_package = "com.databento.dbn.v3.messages.reference";
+
+// InstrumentDefMsg represents instrument definition/metadata.
+// Binary layout: 520 bytes (v3), 400 bytes (v2), 360 bytes (v1), 8-byte aligned
+// RType: 0x13 (INSTRUMENT_DEF)
+message InstrumentDefMsg {
+  // Common record header (16 bytes)
+  databento.dbn.v3.common.RecordHeader hd = 1;
+
+  // Capture-server-received timestamp (u64, fixed-width)
+  // UNIX epoch nanoseconds
+  fixed64 ts_recv = 2;
+
+  // Price-related fields (i64, signed fixed-width)
+  // Fixed-point: divide by 1,000,000,000 to get decimal price
+  sfixed64 min_price_increment = 3;
+  sfixed64 display_factor = 4;
+  sfixed64 high_limit_price = 5;
+  sfixed64 low_limit_price = 6;
+  sfixed64 max_price_variation = 7;
+  sfixed64 unit_of_measure_qty = 8;
+  sfixed64 min_price_increment_amount = 9;
+  sfixed64 price_ratio = 10;
+  sfixed64 strike_price = 11;
+  sfixed64 leg_price = 12;
+  sfixed64 leg_delta = 13;
+
+  // Timestamp fields (u64, fixed-width)
+  // UNIX epoch nanoseconds
+  fixed64 expiration = 14;
+  fixed64 activation = 15;
+
+  // Integer fields
+  fixed64 raw_instrument_id = 16; // u64 fixed-width
+  sfixed32 inst_attrib_value = 17; // i32 signed fixed-width
+  fixed32 underlying_id = 18; // u32 fixed-width
+  sfixed32 market_depth_implied = 19; // i32 signed fixed-width
+  sfixed32 market_depth = 20; // i32 signed fixed-width
+  fixed32 market_segment_id = 21; // u32 fixed-width
+  fixed32 max_trade_vol = 22; // u32 fixed-width
+  sfixed32 min_lot_size = 23; // i32 signed fixed-width
+  sfixed32 min_lot_size_block = 24; // i32 signed fixed-width
+  sfixed32 min_lot_size_round_lot = 25; // i32 signed fixed-width
+  fixed32 min_trade_vol = 26; // u32 fixed-width
+  sfixed32 contract_multiplier = 27; // i32 signed fixed-width
+  sfixed32 decay_quantity = 28; // i32 signed fixed-width
+  sfixed32 original_contract_size = 29; // i32 signed fixed-width
+
+  // Leg fields (for multi-leg strategies)
+  fixed32 leg_instrument_id = 30; // u32 fixed-width
+  sfixed32 leg_ratio_price_numerator = 31; // i32 signed fixed-width
+  sfixed32 leg_ratio_price_denominator = 32; // i32 signed fixed-width
+  sfixed32 leg_ratio_qty_numerator = 33; // i32 signed fixed-width
+  sfixed32 leg_ratio_qty_denominator = 34; // i32 signed fixed-width
+  fixed32 leg_underlying_id = 35; // u32 fixed-width
+
+  // Small integer fields
+  sfixed32 appl_id = 36; // i32 signed fixed-width
+  fixed32 maturity_year = 37; // u32 fixed-width
+  fixed32 decay_start_date = 38; // u32 fixed-width
+  fixed32 channel_id = 39; // u32 fixed-width
+  fixed32 leg_count = 40; // u32 fixed-width
+  fixed32 leg_index = 41; // u32 fixed-width
+
+  // Fixed-length string fields (c_char arrays in binary)
+  string currency = 42; // [c_char; 4]
+  string settl_currency = 43; // [c_char; 4]
+  string secsubtype = 44; // [c_char; 6]
+  string raw_symbol = 45; // [c_char; 22]
+  string group = 46; // [c_char; 21]
+  string exchange = 47; // [c_char; 5]
+  string asset = 48; // [c_char; 7]
+  string cfi = 49; // [c_char; 7]
+  string security_type = 50; // [c_char; 7]
+  string unit_of_measure = 51; // [c_char; 31]
+  string underlying = 52; // [c_char; 21]
+  string strike_price_currency = 53; // [c_char; 4]
+  string leg_raw_symbol = 54; // [c_char; 22]
+
+  // Character flags (c_char in binary)
+  databento.dbn.v3.enums.InstrumentClass instrument_class = 55;
+  databento.dbn.v3.enums.MatchAlgorithm match_algorithm = 56;
+  databento.dbn.v3.enums.SecurityUpdateAction security_update_action = 57;
+  databento.dbn.v3.enums.TriState user_defined_instrument = 58;
+  databento.dbn.v3.enums.InstrumentClass leg_instrument_class = 59;
+  databento.dbn.v3.enums.Side leg_side = 60;
+
+  // Byte fields (u8/i8 in binary, packed as u32)
+  uint32 main_fraction = 61; // u8 in binary
+  uint32 price_display_format = 62; // u8 in binary
+  uint32 sub_fraction = 63; // u8 in binary
+  uint32 underlying_product = 64; // u8 in binary
+  uint32 maturity_month = 65; // u8 in binary
+  uint32 maturity_day = 66; // u8 in binary
+  uint32 maturity_week = 67; // u8 in binary
+  sfixed32 contract_multiplier_unit = 68; // i8 in binary
+  sfixed32 flow_schedule_type = 69; // i8 in binary
+  uint32 tick_rule = 70; // u8 in binary
+}

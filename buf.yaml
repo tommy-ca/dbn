@@ -1,0 +1,23 @@
+version: v2
+modules:
+  - path: proto
+    name: buf.build/databento/dbn
+lint:
+  use:
+    - BASIC
+  except:
+    - PACKAGE_DIRECTORY_MATCH
+    - ENUM_VALUE_PREFIX
+    - ENUM_ZERO_VALUE_SUFFIX
+    - COMMENT_FIELD
+    - COMMENT_ENUM
+    - COMMENT_ENUM_VALUE
+    - COMMENT_MESSAGE
+    - ENUM_VALUE_PREFIX
+  ignore:
+    - proto/vendor
+breaking:
+  use:
+    - FILE
+  ignore:
+    - proto/vendor

@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package databento.dbn.v3.messages.reference;
+
+import "databento/dbn/v3/common/header.proto";
+
+option go_package = "github.com/databento/dbn/gen/go/databento/dbn/v3/messages/reference";
+option java_multiple_files = true;
+option java_package = "com.databento.dbn.v3.messages.reference";
+
+// ImbalanceMsg represents order imbalance information.
+// Size: 120 bytes
+message ImbalanceMsg {
+  // Common record header
+  databento.dbn.v3.common.RecordHeader hd = 1;
+  // Capture-server-received timestamp (UNIX nanoseconds)
+  uint64 ts_recv = 2;
+
+  // Price fields (all fixed-point, scale: 1e-9)
+  int64 ref_price = 3;
+  // Auction time (UNIX nanoseconds)
+  uint64 auction_time = 4;
+  int64 cont_book_clr_price = 5;
+  int64 auct_interest_clr_price = 6;
+  int64 ssr_filling_price = 7;
+  int64 ind_match_price = 8;
+  int64 upper_collar = 9;
+  int64 lower_collar = 10;
+
+  // Quantity fields
+  uint32 paired_qty = 11;
+  uint32 total_imbalance_qty = 12;
+  uint32 market_imbalance_qty = 13;
+  uint32 unpaired_qty = 14;
+
+  // Character fields
+  string auction_type = 15;
+  string side = 16;
+  string unpaired_side = 17;
+  string significant_imbalance = 18;
+
+  // Status fields
+  uint32 auction_status = 19;
+  uint32 freeze_status = 20;
+  uint32 num_extensions = 21;
+}

@@ -1,0 +1,133 @@
+syntax = "proto3";
+
+package databento.dbn.v3.messages.crypto;
+
+import "databento/dbn/v3/common/header.proto";
+
+option go_package = "github.com/databento/dbn/gen/go/databento/dbn/v3/messages/crypto";
+option java_multiple_files = true;
+option java_package = "com.databento.dbn.v3.messages.crypto";
+
+// FundingRateMsg represents a perpetual funding rate record.
+// Binary layout: 80 bytes, 8-byte aligned
+// RType: 0xD0 (208)
+message FundingRateMsg {
+  // Common record header (16 bytes)
+  databento.dbn.v3.common.RecordHeader hd = 1;
+
+  // Capture-server-received timestamp (u64, fixed-width)
+  // UNIX epoch nanoseconds
+  fixed64 ts_recv = 2;
+
+  // Funding rate data (all fixed-point, scale 1e-9)
+  sfixed64 funding_rate = 3;
+  sfixed64 predicted_funding_rate = 4;
+  sfixed64 mark_price = 5;
+  sfixed64 index_price = 6;
+  sfixed64 premium = 7;
+
+  // Interval timestamps (u64, fixed-width)
+  fixed64 funding_interval_start = 8;
+  fixed64 funding_interval_end = 9;
+
+  // Interval duration in milliseconds (u32, fixed-width)
+  fixed32 interval_duration_ms = 10;
+
+  // Message sequence number (u32, fixed-width)
+  fixed32 sequence = 11;
+}
+
+// LiquidationMsg represents a liquidation event record.
+// Binary layout: 96 bytes, 8-byte aligned
+// RType: 0xD1 (209)
+message LiquidationMsg {
+  databento.dbn.v3.common.RecordHeader hd = 1;
+
+  // Capture timestamp (u64, fixed-width, UNIX nanos)
+  fixed64 ts_recv = 2;
+
+  // Liquidation details (fixed-point, scale 1e-9)
+  sfixed64 liquidation_price = 3;
+  sfixed64 quantity = 4;
+  sfixed64 bankrupt_price = 5;
+  sfixed64 mark_price = 6;
+  sfixed64 unrealized_pnl = 7;
+
+  // Account identifiers (hashed, u64)
+  fixed64 account_id = 8;
+  fixed64 liquidator_id = 9;
+
+  // Position side and liquidation type (byte-sized fields in binary)
+  // 'B'/'S' for long/short; liquidation_type: 0=partial, 1=full, 2=ADL
+  uint32 side = 10;
+  uint32 liquidation_type = 11;
+
+  // Message sequence number (u32, fixed-width)
+  fixed32 sequence = 12;
+
+  // Total position value at liquidation (fixed-point)
+  sfixed64 position_value = 13;
+}
+
+// MarkPriceMsg represents a mark price update record.
+// Binary layout: 64 bytes, 8-byte aligned
+// RType: 0xD2 (210)
+message MarkPriceMsg {
+  databento.dbn.v3.common.RecordHeader hd = 1;
+  fixed64 ts_recv = 2;
+
+  // Price fields (fixed-point, scale 1e-9)
+  sfixed64 mark_price = 3;
+  sfixed64 index_price = 4;
+  sfixed64 last_price = 5;
+  sfixed64 premium = 6;
+
+  // Update reason: 1=periodic, 2=volatility, 3=funding
+  uint32 update_reason = 7;
+
+  // Message sequence number (u32, fixed-width)
+  fixed32 sequence = 8;
+}
+
+// IndexPriceMsg represents a multi-venue spot index record.
+// Binary layout: 96 bytes, 8-byte aligned
+// RType: 0xD3 (211)
+message IndexPriceMsg {
+  databento.dbn.v3.common.RecordHeader hd = 1;
+  fixed64 ts_recv = 2;
+
+  // Index price (fixed-point, scale 1e-9)
+  sfixed64 index_price = 3;
+
+  // Component prices and weights (bounded to length ≤ 5)
+  repeated sfixed64 component_prices = 4;
+  repeated sfixed32 component_weights = 5; // 1e-6 scale, sum to 1e6
+
+  // Number of active components
+  uint32 num_components = 6;
+
+  // Message sequence number (u32, fixed-width)
+  fixed32 sequence = 7;
+}
+
+// BasisMsg represents a spot–futures basis record.
+// Binary layout: 72 bytes, 8-byte aligned
+// RType: 0xD9 (217)
+message BasisMsg {
+  databento.dbn.v3.common.RecordHeader hd = 1;
+  fixed64 ts_recv = 2;
+
+  // Basis spread data (fixed-point, scale 1e-9)
+  sfixed64 spot_price = 3;
+  sfixed64 futures_price = 4;
+  sfixed64 basis = 5;
+  sfixed64 basis_pct = 6;
+  sfixed64 annualized_basis = 7;
+
+  // Instrument IDs (u32, fixed-width)
+  fixed32 spot_instrument_id = 8;
+  fixed32 futures_instrument_id = 9;
+
+  // Message sequence number (u32, fixed-width)
+  fixed32 sequence = 10;
+}

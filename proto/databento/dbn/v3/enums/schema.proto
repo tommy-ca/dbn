@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package databento.dbn.v3.enums;
+
+option go_package = "github.com/databento/dbn/gen/go/databento/dbn/v3/enums";
+option java_multiple_files = true;
+option java_package = "com.databento.dbn.v3.enums";
+
+// Schema - Data schema types
+enum Schema {
+  SCHEMA_MBO = 0; // Market-by-order
+  SCHEMA_MBP1 = 1; // MBP depth 1
+  SCHEMA_MBP10 = 2; // MBP depth 10
+  SCHEMA_TBBO = 3; // Trade with BBO
+  SCHEMA_TRADES = 4; // All trades
+  SCHEMA_OHLCV_1S = 5; // OHLCV 1-second
+  SCHEMA_OHLCV_1M = 6; // OHLCV 1-minute
+  SCHEMA_OHLCV_1H = 7; // OHLCV 1-hour
+  SCHEMA_OHLCV_1D = 8; // OHLCV 1-day UTC
+  SCHEMA_DEFINITION = 9; // Instrument definitions
+  SCHEMA_STATISTICS = 10; // Statistics
+  SCHEMA_STATUS = 11; // Trading status
+  SCHEMA_IMBALANCE = 12; // Auction imbalance
+  SCHEMA_OHLCV_EOD = 13; // OHLCV end-of-day
+  SCHEMA_CMBP1 = 14; // Consolidated MBP depth 1
+  SCHEMA_CBBO_1S = 15; // Consolidated BBO 1-second
+  SCHEMA_CBBO_1M = 16; // Consolidated BBO 1-minute
+  SCHEMA_TCBBO = 17; // Trade with consolidated BBO
+  SCHEMA_BBO_1S = 18; // BBO 1-second
+  SCHEMA_BBO_1M = 19; // BBO 1-minute
+}
